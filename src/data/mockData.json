@@ -1,0 +1,385 @@
+{
+  "products": [
+    {
+      "id": "PV-001",
+      "name": "Omega-3 Aceite de Pescado",
+      "category": "Suplementos",
+      "price": 145,
+      "stock": 32,
+      "description": "Cápsulas de Omega-3 de alta pureza para salud cardiovascular y cerebral. Ideal para el clima seco de La Paz.",
+      "image": "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=600&q=80",
+      "featured": true,
+      "images": [
+        "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=600&q=80",
+        "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&q=80",
+        "https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=600&q=80"
+      ],
+      "benefits": [
+        "Apoya la salud cardiovascular",
+        "Favorece la función cognitiva",
+        "Reduce la inflamación articular"
+      ],
+      "tags": ["Alta pureza", "Libre de mercurio"]
+    },
+    {
+      "id": "PV-002",
+      "name": "Colágeno Hidrolizado + Vitamina C",
+      "category": "Suplementos",
+      "price": 189,
+      "stock": 18,
+      "description": "Fórmula para piel, articulaciones y cabello. Absorción rápida y sabor natural a naranja.",
+      "image": "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=600&q=80",
+      "featured": true,
+      "images": [
+        "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=600&q=80",
+        "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=600&q=80",
+        "https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=600&q=80"
+      ],
+      "benefits": [
+        "Mejora la elasticidad de la piel",
+        "Fortalece articulaciones",
+        "Favorece el crecimiento del cabello"
+      ],
+      "tags": ["Sabor natural", "Absorción rápida"]
+    },
+    {
+      "id": "PV-003",
+      "name": "Magnesio Quelado 400mg",
+      "category": "Suplementos",
+      "price": 98,
+      "stock": 45,
+      "description": "Relaja músculos y mejora el descanso nocturno. Especialmente útil a gran altitud.",
+      "image": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&q=80",
+      "featured": false,
+      "images": [
+        "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&q=80",
+        "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=600&q=80",
+        "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=600&q=80"
+      ],
+      "benefits": [
+        "Relaja la musculatura",
+        "Mejora la calidad del sueño",
+        "Reduce calambres en altura"
+      ],
+      "tags": ["Alta absorción"]
+    },
+    {
+      "id": "PV-004",
+      "name": "Ashwagandha KSM-66",
+      "category": "Suplementos",
+      "price": 135,
+      "stock": 4,
+      "description": "Adaptógeno premium para reducir estrés y equilibrar energía diaria.",
+      "image": "https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=600&q=80",
+      "featured": true,
+      "images": [
+        "https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=600&q=80",
+        "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=600&q=80",
+        "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&q=80"
+      ],
+      "benefits": [
+        "Reduce el estrés y el cortisol",
+        "Equilibra la energía diaria",
+        "Mejora la claridad mental"
+      ],
+      "tags": ["Adaptógeno", "Extracto premium"]
+    },
+    {
+      "id": "PV-005",
+      "name": "Vitamina D3 5000 UI",
+      "category": "Vitaminas",
+      "price": 75,
+      "stock": 60,
+      "description": "Soporte óseo e inmunológico. Recomendada en épocas de menor exposición solar.",
+      "image": "https://images.unsplash.com/photo-1577401239170-897942555fb3?w=600&q=80",
+      "featured": true,
+      "images": [
+        "https://images.unsplash.com/photo-1577401239170-897942555fb3?w=600&q=80",
+        "https://images.unsplash.com/photo-1631730486572-226d1f595b68?w=600&q=80",
+        "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=600&q=80"
+      ],
+      "benefits": [
+        "Fortalece huesos y dientes",
+        "Refuerza el sistema inmunológico",
+        "Compensa la baja exposición solar"
+      ],
+      "tags": ["Alta dosis"]
+    },
+    {
+      "id": "PV-006",
+      "name": "Complejo B Forte",
+      "category": "Vitaminas",
+      "price": 68,
+      "stock": 28,
+      "description": "Energía metabólica y sistema nervioso. Incluye B1, B6, B12 y ácido fólico.",
+      "image": "https://images.unsplash.com/photo-1631730486572-226d1f595b68?w=600&q=80",
+      "featured": false,
+      "images": [
+        "https://images.unsplash.com/photo-1631730486572-226d1f595b68?w=600&q=80",
+        "https://images.unsplash.com/photo-1577401239170-897942555fb3?w=600&q=80",
+        "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80"
+      ],
+      "benefits": [
+        "Aumenta la energía metabólica",
+        "Apoya el sistema nervioso",
+        "Incluye ácido fólico"
+      ],
+      "tags": ["B1, B6, B12"]
+    },
+    {
+      "id": "PV-007",
+      "name": "Vitamina C Liposomal 1000mg",
+      "category": "Vitaminas",
+      "price": 112,
+      "stock": 22,
+      "description": "Alta biodisponibilidad para defensas y antioxidante diario.",
+      "image": "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=600&q=80",
+      "featured": true,
+      "images": [
+        "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=600&q=80",
+        "https://images.unsplash.com/photo-1577401239170-897942555fb3?w=600&q=80",
+        "https://images.unsplash.com/photo-1631730486572-226d1f595b68?w=600&q=80"
+      ],
+      "benefits": [
+        "Refuerza las defensas",
+        "Antioxidante de alta biodisponibilidad",
+        "Absorción superior a la vitamina C común"
+      ],
+      "tags": ["Liposomal", "Alta biodisponibilidad"]
+    },
+    {
+      "id": "PV-008",
+      "name": "Multivitamínico Diario Adulto",
+      "category": "Vitaminas",
+      "price": 95,
+      "stock": 3,
+      "description": "Cobertura completa de micronutrientes esenciales para el ritmo paceño.",
+      "image": "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80",
+      "featured": false,
+      "images": [
+        "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80",
+        "https://images.unsplash.com/photo-1577401239170-897942555fb3?w=600&q=80",
+        "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=600&q=80"
+      ],
+      "benefits": [
+        "Cobertura completa de micronutrientes",
+        "Pensado para el ritmo de vida en altura",
+        "Una sola toma diaria"
+      ],
+      "tags": ["Uso diario"]
+    },
+    {
+      "id": "PV-009",
+      "name": "Aceite Facial de Rosa Mosqueta",
+      "category": "Cosmética Natural",
+      "price": 128,
+      "stock": 15,
+      "description": "Hidratación profunda y regeneración cutánea 100% natural, sin parabenos.",
+      "image": "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=600&q=80",
+      "featured": true,
+      "images": [
+        "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=600&q=80",
+        "https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?w=600&q=80",
+        "https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?w=600&q=80"
+      ],
+      "benefits": [
+        "Hidratación profunda",
+        "Favorece la regeneración cutánea",
+        "Reduce marcas y cicatrices"
+      ],
+      "tags": ["Sin parabenos", "100% Natural"]
+    },
+    {
+      "id": "PV-010",
+      "name": "Jabón Artesanal de Menta Andina",
+      "category": "Cosmética Natural",
+      "price": 35,
+      "stock": 50,
+      "description": "Limpieza suave con aroma fresco de hierbas andinas. Ideal para piel sensible.",
+      "image": "https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?w=600&q=80",
+      "featured": false,
+      "images": [
+        "https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?w=600&q=80",
+        "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=600&q=80",
+        "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=600&q=80"
+      ],
+      "benefits": [
+        "Limpieza suave para piel sensible",
+        "Aroma fresco de hierbas andinas",
+        "Ingredientes naturales locales"
+      ],
+      "tags": ["Artesanal", "Piel sensible"]
+    },
+    {
+      "id": "PV-011",
+      "name": "Crema Corporal de Karité & Aloe",
+      "category": "Cosmética Natural",
+      "price": 89,
+      "stock": 0,
+      "description": "Nutrición intensa contra el clima seco. Textura ligera de rápida absorción.",
+      "image": "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=600&q=80",
+      "featured": false,
+      "images": [
+        "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=600&q=80",
+        "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=600&q=80",
+        "https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?w=600&q=80"
+      ],
+      "benefits": [
+        "Nutrición intensa contra el clima seco",
+        "Absorción rápida sin dejar residuo graso",
+        "Calma la piel irritada"
+      ],
+      "tags": ["Textura ligera"]
+    },
+    {
+      "id": "PV-012",
+      "name": "Serum Vitamina E + Ácido Hialurónico",
+      "category": "Cosmética Natural",
+      "price": 155,
+      "stock": 12,
+      "description": "Antiedad y luminosidad natural. Fórmula vegana certificada.",
+      "image": "https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?w=600&q=80",
+      "featured": true,
+      "images": [
+        "https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?w=600&q=80",
+        "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=600&q=80",
+        "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=600&q=80"
+      ],
+      "benefits": [
+        "Efecto antiedad visible",
+        "Aporta luminosidad natural",
+        "Fórmula vegana certificada"
+      ],
+      "tags": ["Vegano", "Antiedad"]
+    },
+    {
+      "id": "PV-013",
+      "name": "Whey Protein Isolate 1kg Vainilla",
+      "category": "Proteínas",
+      "price": 320,
+      "stock": 14,
+      "description": "Proteína aislada de alta pureza, bajo en lactosa. 25g por porción.",
+      "image": "https://images.unsplash.com/photo-1576678927484-cc907957088c?w=600&q=80",
+      "featured": true,
+      "images": [
+        "https://images.unsplash.com/photo-1576678927484-cc907957088c?w=600&q=80",
+        "https://images.unsplash.com/photo-1579722820308-d74e571900a9?w=600&q=80",
+        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&q=80"
+      ],
+      "benefits": [
+        "25g de proteína por porción",
+        "Bajo en lactosa",
+        "Ideal para recuperación muscular"
+      ],
+      "tags": ["Alto en proteína", "Bajo en lactosa"]
+    },
+    {
+      "id": "PV-014",
+      "name": "Proteína Vegetal de Arveja 750g",
+      "category": "Proteínas",
+      "price": 275,
+      "stock": 9,
+      "description": "Opción vegana completa con aminoácidos esenciales. Sabor cacao.",
+      "image": "https://images.unsplash.com/photo-1579722820308-d74e571900a9?w=600&q=80",
+      "featured": false,
+      "images": [
+        "https://images.unsplash.com/photo-1579722820308-d74e571900a9?w=600&q=80",
+        "https://images.unsplash.com/photo-1576678927484-cc907957088c?w=600&q=80",
+        "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&q=80"
+      ],
+      "benefits": [
+        "Perfil completo de aminoácidos esenciales",
+        "100% vegana",
+        "Sabor cacao natural"
+      ],
+      "tags": ["Vegano", "Sin lactosa"]
+    },
+    {
+      "id": "PV-015",
+      "name": "Creatina Monohidrato 300g",
+      "category": "Proteínas",
+      "price": 165,
+      "stock": 25,
+      "description": "Fuerza y rendimiento deportivo. Micronizada para mejor disolución.",
+      "image": "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&q=80",
+      "featured": false,
+      "images": [
+        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&q=80",
+        "https://images.unsplash.com/photo-1576678927484-cc907957088c?w=600&q=80",
+        "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&q=80"
+      ],
+      "benefits": [
+        "Aumenta fuerza y rendimiento",
+        "Micronizada para mejor disolución",
+        "Respaldada por evidencia científica"
+      ],
+      "tags": ["Micronizada"]
+    },
+    {
+      "id": "PV-016",
+      "name": "BCAA 2:1:1 Polvo 250g",
+      "category": "Proteínas",
+      "price": 148,
+      "stock": 2,
+      "description": "Recuperación muscular post-entrenamiento. Sabor limón natural.",
+      "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&q=80",
+      "featured": false,
+      "images": [
+        "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&q=80",
+        "https://images.unsplash.com/photo-1576678927484-cc907957088c?w=600&q=80",
+        "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&q=80"
+      ],
+      "benefits": [
+        "Acelera la recuperación muscular",
+        "Reduce la fatiga en el entrenamiento",
+        "Sabor limón natural"
+      ],
+      "tags": ["Post-entrenamiento"]
+    }
+  ],
+  "storeInfo": {
+    "name": "Casa de Pura Vida Sana",
+    "tagline": "Salud integral desde La Paz",
+    "phone": "+591 70000000",
+    "whatsapp": "59170000000",
+    "email": "hola@casapuravidasana.bo",
+    "branches": [
+      {
+        "id": "sopocachi",
+        "name": "Sucursal Sopocachi",
+        "address": "Av. 20 de Octubre #2020, Zona Sopocachi, La Paz, Bolivia",
+        "phone": "+591 70000000",
+        "hours": "Lun–Sáb 9:00–19:00",
+        "lat": -16.5107,
+        "lon": -68.1257
+      },
+      {
+        "id": "calacoto",
+        "name": "Sucursal Calacoto",
+        "address": "Av. Ballivián #555, Calacoto, Zona Sur, La Paz, Bolivia",
+        "phone": "+591 70000001",
+        "hours": "Lun–Sáb 9:30–19:30",
+        "lat": -16.5432,
+        "lon": -68.0844
+      }
+    ],
+    "rating": 5,
+    "totalReviews": 2,
+    "reviews": [
+      {
+        "id": "r1",
+        "author": "Brayan Burgoa",
+        "rating": 5,
+        "comment": "Excelente atención y buenos precios a comparación de otros lugares.",
+        "relativeDate": "hace 2 meses"
+      },
+      {
+        "id": "r2",
+        "author": "tofe",
+        "rating": 5,
+        "comment": "Muy amables.",
+        "relativeDate": "hace 2 semanas"
+      }
+    ]
+  }
+}

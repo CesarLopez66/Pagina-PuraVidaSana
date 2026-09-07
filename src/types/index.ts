@@ -1,0 +1,102 @@
+export type Category =
+  | "Suplementos"
+  | "Vitaminas"
+  | "Cosmética Natural"
+  | "Proteínas";
+
+export type StockStatus = "Disponible" | "Bajo Stock" | "Agotado";
+
+export interface Product {
+  id: string;
+  name: string;
+  category: Category;
+  price: number;
+  stock: number;
+  description: string;
+  image: string;
+  featured?: boolean;
+  images?: string[];
+  benefits?: string[];
+  tags?: string[];
+}
+
+export interface CartItem {
+  productId: string;
+  quantity: number;
+}
+
+export interface ShippingInfo {
+  name: string;
+  phone: string;
+  cityZone: string;
+  address: string;
+}
+
+export type OrderStatus = "Pendiente" | "Confirmado" | "Cancelado";
+
+export interface Order {
+  id: string;
+  items: CartItem[];
+  shipping: ShippingInfo;
+  total: number;
+  shippingFee: number;
+  paymentMethod: "whatsapp";
+  status: OrderStatus;
+  createdAt: string;
+}
+
+export interface StoreData {
+  products: Product[];
+  cart: CartItem[];
+  lastOrder: Order | null;
+}
+
+export interface StoreInfo {
+  name: string;
+  tagline: string;
+  phone: string;
+  whatsapp: string;
+  email: string;
+  branches: Branch[];
+  instagram: string;
+  facebook: string;
+  tiktok: string;
+  shippingFee: number;
+}
+
+export interface Branch {
+  id: string;
+  name: string;
+  address: string;
+  phone: string;
+  hours: string;
+  lat: number;
+  lon: number;
+}
+
+export interface Review {
+  id: string;
+  author: string;
+  rating: number;
+  comment: string;
+  relativeDate: string;
+}
+
+export interface GoogleReviewsResponse {
+  source: "google" | "mock";
+  rating: number;
+  totalReviews: number;
+  reviews: Review[];
+}
+
+export interface WheelLead {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  birthdate?: string;
+  prizeLabel: string;
+  prizeCode: string;
+  consentMarketing: boolean;
+  createdAt: string;
+}

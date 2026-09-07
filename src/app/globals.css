@@ -1,26 +1,215 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --forest: #184d28;
+  --leaf: #6eb43f;
+  --soft: #f2f8ee;
+  --ink: #1c241e;
+  --surface: #f9fafb;
+  --white: #ffffff;
+  --gold: #d97706;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-forest: var(--forest);
+  --color-leaf: var(--leaf);
+  --color-soft: var(--soft);
+  --color-ink: var(--ink);
+  --color-surface: var(--surface);
+  --color-background: var(--white);
+  --color-foreground: var(--ink);
+  --color-gold: var(--gold);
+  --font-sans: var(--font-montserrat);
+  --font-display: var(--font-fredoka);
+  --font-script: var(--font-kaushan);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--font-montserrat), "Segoe UI", sans-serif;
 }
+
+::selection {
+  background: color-mix(in srgb, var(--leaf) 35%, white);
+  color: var(--forest);
+}
+
+.grain-overlay {
+  position: relative;
+}
+
+.grain-overlay::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes soft-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+@keyframes drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.7s ease-out both;
+}
+
+.animate-fade-up-delay-1 {
+  animation: fade-up 0.7s ease-out 0.12s both;
+}
+
+.animate-fade-up-delay-2 {
+  animation: fade-up 0.7s ease-out 0.24s both;
+}
+
+.animate-soft-pulse {
+  animation: soft-pulse 3.5s ease-in-out infinite;
+}
+
+.animate-drawer-in {
+  animation: drawer-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-backdrop-in {
+  animation: backdrop-in 0.25s ease-out both;
+}
+
+@keyframes cart-bounce {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.18);
+  }
+}
+
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-cart-bounce {
+  animation: cart-bounce 0.4s ease-out;
+}
+
+.animate-dropdown-in {
+  animation: dropdown-in 0.2s ease-out both;
+}
+
+.animate-modal-in {
+  animation: modal-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.leaf-pattern {
+  background-image:
+    radial-gradient(circle at 12% 20%, rgba(110, 180, 63, 0.12), transparent 35%),
+    radial-gradient(circle at 88% 10%, rgba(24, 77, 40, 0.08), transparent 30%),
+    linear-gradient(180deg, #f2f8ee 0%, #ffffff 55%, #f9fafb 100%);
+}
+
+.warm-pattern {
+  background-image:
+    radial-gradient(circle at 15% 30%, rgba(217, 119, 6, 0.08), transparent 40%),
+    radial-gradient(circle at 85% 70%, rgba(110, 180, 63, 0.06), transparent 35%),
+    linear-gradient(180deg, #fdf6ea 0%, #ffffff 100%);
+}
+
+.footer-glow {
+  background-image:
+    radial-gradient(circle at 10% 0%, rgba(110, 180, 63, 0.14), transparent 45%),
+    radial-gradient(circle at 100% 100%, rgba(110, 180, 63, 0.12), transparent 40%);
+}
+
+.glass-panel {
+  @apply border-[1.5px] border-white/60 bg-white/60 backdrop-blur-xl shadow-[0_10px_34px_-12px_rgba(24,77,40,0.18)];
+}
+
+.text-stroke-thin {
+  -webkit-text-stroke: 0.6px rgba(0, 0, 0, 0.4);
+  paint-order: stroke fill;
+}
+
+/* Interacción compartida para botones, íconos y enlaces: en vez de que el
+   elemento contenedor cambie de fondo, el contenido (texto/ícono) crece
+   levemente y brilla con un halo del mismo color al pasar el cursor o
+   seleccionarse. El color se define aparte con hover:text-* en cada uso;
+   el brillo sigue ese color automáticamente vía currentColor. */
+.pop-glow {
+  @apply transition-all duration-200 ease-out hover:scale-110 hover:drop-shadow-[0_0_8px_currentColor] focus-visible:scale-110 focus-visible:drop-shadow-[0_0_8px_currentColor];
+}
+
+.pop-glow-active {
+  @apply scale-110 drop-shadow-[0_0_8px_currentColor];
+}
+
