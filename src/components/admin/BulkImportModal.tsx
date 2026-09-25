@@ -86,7 +86,11 @@ export function BulkImportModal({ open, onClose }: BulkImportModalProps) {
   const [parseError, setParseError] = useState<string | null>(null);
   const [pendingItems, setPendingItems] = useState<Record<string, unknown>[] | null>(null);
   const [importing, setImporting] = useState(false);
-  const [result, setResult] = useState<{ created: number; rejected: string[] } | null>(null);
+  const [result, setResult] = useState<{
+    created: number;
+    rejected: string[];
+    warning?: string;
+  } | null>(null);
 
   const reset = () => {
     setFileName(null);
@@ -143,7 +147,11 @@ export function BulkImportModal({ open, onClose }: BulkImportModalProps) {
         setPendingItems(null);
         return;
       }
-      setResult({ created: data.created?.length ?? 0, rejected: data.rejected ?? [] });
+      setResult({
+        created: data.created?.length ?? 0,
+        rejected: data.rejected ?? [],
+        warning: data.warning,
+      });
       setPendingItems(null);
       await fetchProducts();
     } catch {
@@ -210,6 +218,9 @@ export function BulkImportModal({ open, onClose }: BulkImportModalProps) {
               {result.created === 1 ? "" : "s"} creado
               {result.created === 1 ? "" : "s"} correctamente.
             </p>
+            {result.warning && (
+              <p className="text-amber-800">{result.warning}</p>
+            )}
             {result.rejected.length > 0 && (
               <div>
                 <p className="font-semibold text-amber-700">

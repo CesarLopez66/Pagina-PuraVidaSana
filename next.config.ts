@@ -12,7 +12,19 @@ const nextConfig: NextConfig = {
       // creado el proyecto (es el subdominio de NEXT_PUBLIC_SUPABASE_URL).
       {
         protocol: "https",
-        hostname: "<project-ref>.supabase.co",
+        hostname: "gdfkdyqitpumotelavfi.supabase.co",
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "drive.google.com",
+      },
+      {
+        protocol: "https",
+        hostname: "drive.usercontent.google.com",
       },
     ],
   },

@@ -61,9 +61,10 @@ export default function AdminPage() {
             Inventario / Admin
           </h1>
           <p className="mt-2 max-w-2xl text-ink/65">
-            El inventario vive en Supabase: los cambios se guardan de
-            inmediato en la base de datos. El stock bajo (&lt; 5) se marca
-            automáticamente.
+            El inventario intenta guardarse en Supabase. Si ese proyecto no
+            está disponible, los cambios quedan en este servidor para que
+            puedas seguir cargando el catálogo. El stock bajo (&lt; 5) se
+            marca automáticamente.
           </p>
         </div>
 

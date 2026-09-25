@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { isAdminAuthenticated } from "@/lib/admin/auth";
+import { insertLocalProducts } from "@/lib/products-local";
+import { isSupabaseUnreachable, SUPABASE_DOWN_MESSAGE } from "@/lib/supabase/errors";
 import { getServiceClient } from "@/lib/supabase/server";
+
+export const runtime = "nodejs";
 
 const categories = ["Suplementos", "Vitaminas", "Cosmética Natural", "Proteínas"];
 
@@ -107,17 +111,43 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { data, error } = await getServiceClient()
-    .from("products")
-    .insert(toInsert)
-    .select();
+  try {
+    const { data, error } = await getServiceClient()
+      .from("products")
+      .insert(toInsert)
+      .select();
 
-  if (error) {
+    if (error) {
+      if (isSupabaseUnreachable(error)) {
+        const created = await insertLocalProducts(toInsert);
+        return NextResponse.json({
+          ok: true,
+          created,
+          rejected,
+          warning: SUPABASE_DOWN_MESSAGE,
+        });
+      }
+      return NextResponse.json(
+        { ok: false, message: "No se pudieron crear los productos: " + error.message },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ ok: true, created: data, rejected });
+  } catch (err) {
+    if (isSupabaseUnreachable(err)) {
+      const created = await insertLocalProducts(toInsert);
+      return NextResponse.json({
+        ok: true,
+        created,
+        rejected,
+        warning: SUPABASE_DOWN_MESSAGE,
+      });
+    }
+    const message = err instanceof Error ? err.message : "Error inesperado.";
     return NextResponse.json(
-      { ok: false, message: "No se pudieron crear los productos: " + error.message },
+      { ok: false, message: "No se pudieron crear los productos: " + message },
       { status: 500 }
     );
   }
-
-  return NextResponse.json({ ok: true, created: data, rejected });
 }
