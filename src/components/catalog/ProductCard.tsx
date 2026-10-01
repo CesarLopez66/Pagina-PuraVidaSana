@@ -1,12 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { ShoppingCart } from "lucide-react";
-import { useState } from "react";
+import { MessageCircle } from "lucide-react";
 import type { Product } from "@/types";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { formatBs, getStockStatus, stockStatusClasses } from "@/lib/format";
+import { productWhatsAppUrl } from "@/lib/format";
 import { useStore } from "@/store/useStore";
 
 export function ProductCard({
@@ -16,19 +15,8 @@ export function ProductCard({
   product: Product;
   variant?: "glass" | "solid";
 }) {
-  const addToCart = useStore((s) => s.addToCart);
   const setSelectedProduct = useStore((s) => s.setSelectedProduct);
-  const [message, setMessage] = useState<string | null>(null);
-  const status = getStockStatus(product.stock);
-  const disabled = product.stock <= 0;
-
-  const handleAdd = () => {
-    const result = addToCart(product.id);
-    if (!result.ok && result.message) {
-      setMessage(result.message);
-      setTimeout(() => setMessage(null), 2500);
-    }
-  };
+  const whatsapp = useStore((s) => s.storeInfo.whatsapp);
 
   return (
     <article
@@ -53,9 +41,6 @@ export function ProductCard({
           sizes="(max-width:768px) 100vw, 25vw"
           unoptimized
         />
-        <div className="absolute left-3 top-3">
-          <Badge className={stockStatusClasses(status)}>{status}</Badge>
-        </div>
         {product.featured && (
           <div className="absolute right-3 top-3">
             <Badge variant="gold-soft">Destacado</Badge>
@@ -85,29 +70,19 @@ export function ProductCard({
             ))}
           </div>
         )}
-        <div className="mt-5 flex items-center justify-between gap-2">
-          <div>
-            <p className="text-xl font-bold text-forest">
-              {formatBs(product.price)}
-            </p>
-            <p className="text-sm text-ink/45">Stock: {product.stock}</p>
-          </div>
-          <Button
-            size="sm"
-            variant={disabled ? "outline" : "secondary"}
-            disabled={disabled}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleAdd();
-            }}
+        <div className="mt-5">
+          <a
+            href={productWhatsAppUrl(whatsapp, product.name)}
+            target="_blank"
+            rel="noreferrer"
+            onClick={(e) => e.stopPropagation()}
           >
-            <ShoppingCart size={16} />
-            {disabled ? "Agotado" : "Añadir"}
-          </Button>
+            <Button size="sm" variant="secondary" className="w-full">
+              <MessageCircle size={16} />
+              Consultar por WhatsApp
+            </Button>
+          </a>
         </div>
-        {message && (
-          <p className="mt-2 text-sm text-amber-700">{message}</p>
-        )}
       </div>
     </article>
   );

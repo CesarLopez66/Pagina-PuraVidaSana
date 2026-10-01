@@ -10,7 +10,6 @@ import {
 import {
   ChevronLeft,
   ChevronRight,
-  MessageSquareOff,
   RefreshCw,
   Star,
   TriangleAlert,
@@ -246,6 +245,8 @@ export function Reviews() {
 
   useEffect(() => load(), [load]);
 
+  if (status === "ready" && (!data || data.reviews.length === 0)) return null;
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20">
       <Reveal className="glass-panel mx-auto mb-12 max-w-xl rounded-2xl px-7 py-7 text-center">
@@ -266,7 +267,6 @@ export function Reviews() {
             </span>
             <span>
               {data.rating.toFixed(1)} de 5 · {data.totalReviews} reseñas
-              {data.source === "mock" ? " (muestra)" : ""}
             </span>
           </div>
         )}
@@ -311,17 +311,6 @@ export function Reviews() {
             <RefreshCw size={16} />
             Reintentar
           </Button>
-        </div>
-      )}
-
-      {status === "ready" && data && data.reviews.length === 0 && (
-        <div className="glass-panel mx-auto max-w-md rounded-2xl p-8 text-center">
-          <span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-soft text-leaf">
-            <MessageSquareOff size={22} />
-          </span>
-          <p className="text-base text-ink/65">
-            Todavía no tenemos reseñas para mostrar aquí.
-          </p>
         </div>
       )}
 

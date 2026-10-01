@@ -2,28 +2,23 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { Menu, Search, ShoppingBag, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Menu, Search, X } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 import { useStore } from "@/store/useStore";
-
-const links = [
-  { href: "/", label: "Inicio" },
-  { href: "/catalogo", label: "Catálogo" },
-  { href: "/nosotros", label: "Nosotros" },
-];
 
 export function Header() {
   const pathname = usePathname();
   const router = useRouter();
+  const nav = useStore((s) => s.siteContent.nav);
+  const links = [
+    { href: "/", label: nav.home },
+    { href: "/catalogo", label: nav.catalog },
+    { href: "/nosotros", label: nav.about },
+  ];
   const [mobileOpen, setMobileOpen] = useState(false);
   const [localSearch, setLocalSearch] = useState("");
-  const cartCount = useStore((s) => s.getCartCount());
-  const setCartOpen = useStore((s) => s.setCartOpen);
   const setSearchQuery = useStore((s) => s.setSearchQuery);
-  const hydrated = useStore((s) => s.hydrated);
-  const [cartBounce, setCartBounce] = useState(false);
-  const prevCartCountRef = useRef<number | null>(null);
   const [scrolled, setScrolled] = useState(false);
 
   const submitSearch = (e: React.FormEvent) => {
@@ -33,21 +28,6 @@ export function Header() {
     setMobileOpen(false);
     router.push(q ? `/catalogo?q=${encodeURIComponent(q)}` : "/catalogo");
   };
-
-  useEffect(() => {
-    if (!hydrated) return;
-    if (prevCartCountRef.current === null) {
-      prevCartCountRef.current = cartCount;
-      return;
-    }
-    if (cartCount > prevCartCountRef.current) {
-      setCartBounce(true);
-      const t = setTimeout(() => setCartBounce(false), 400);
-      prevCartCountRef.current = cartCount;
-      return () => clearTimeout(t);
-    }
-    prevCartCountRef.current = cartCount;
-  }, [cartCount, hydrated]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -63,7 +43,23 @@ export function Header() {
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center gap-5 px-5 py-5 md:px-8">
-        <Logo size="md" />
+        <div className="flex min-w-0 items-center gap-3">
+          <Logo size="md" />
+          {(nav.brandName || nav.brandTagline) && (
+            <Link href="/" className="hidden min-w-0 leading-tight sm:block">
+              {nav.brandName && (
+                <p className="font-display truncate text-xl font-bold text-forest">
+                  {nav.brandName}
+                </p>
+              )}
+              {nav.brandTagline && (
+                <p className="font-script truncate text-base text-leaf">
+                  {nav.brandTagline}
+                </p>
+              )}
+            </Link>
+          )}
+        </div>
 
         <nav className="ml-4 hidden items-center gap-1 lg:flex">
           {links.map((link) => {
@@ -96,30 +92,14 @@ export function Header() {
             <input
               value={localSearch}
               onChange={(e) => setLocalSearch(e.target.value)}
-              placeholder="Buscar vitaminas, suplementos..."
+              placeholder={nav.searchPlaceholder}
               className="w-full rounded-xl border border-forest/15 bg-white/70 py-3.5 pl-11 pr-3 text-lg outline-none transition focus:border-leaf focus:ring-2 focus:ring-leaf/20"
             />
           </div>
         </form>
 
         <button
-          onClick={() => setCartOpen(true)}
-          className="relative ml-auto p-1.5 text-forest md:ml-0"
-          aria-label="Abrir carrito"
-        >
-          <ShoppingBag
-            size={28}
-            className={`pop-glow hover:text-leaf ${cartBounce ? "animate-cart-bounce" : ""}`}
-          />
-          {hydrated && cartCount > 0 && (
-            <span className="absolute -right-1.5 -top-1.5 flex h-6 min-w-6 items-center justify-center rounded-full bg-leaf px-1 text-xs font-bold text-white">
-              {cartCount}
-            </span>
-          )}
-        </button>
-
-        <button
-          className="rounded-xl p-2.5 text-forest lg:hidden"
+          className="ml-auto rounded-xl p-2.5 text-forest md:ml-0 lg:hidden"
           onClick={() => setMobileOpen((v) => !v)}
           aria-label="Menú"
         >
@@ -142,7 +122,7 @@ export function Header() {
               <input
                 value={localSearch}
                 onChange={(e) => setLocalSearch(e.target.value)}
-                placeholder="Buscar productos..."
+                placeholder={nav.searchPlaceholder}
                 className="w-full rounded-xl border border-forest/15 bg-white/70 py-3.5 pl-11 pr-3 text-lg outline-none focus:border-leaf"
               />
             </div>

@@ -16,14 +16,7 @@ export function CatalogView() {
   const setSearchQuery = useStore((s) => s.setSearchQuery);
   const searchParams = useSearchParams();
 
-  const priceCeiling = useMemo(
-    () => Math.max(...products.map((p) => p.price), 500),
-    [products]
-  );
-
   const [category, setCategory] = useState<Category | "Todas">("Todas");
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(priceCeiling);
   const [search, setSearch] = useState(searchQuery);
   const [page, setPage] = useState(1);
 
@@ -44,23 +37,18 @@ export function CatalogView() {
     }
   }, [searchParams, setSearchQuery]);
 
-  useEffect(() => {
-    setMaxPrice(priceCeiling);
-  }, [priceCeiling]);
-
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
     return products.filter((p) => {
       const matchCat = category === "Todas" || p.category === category;
-      const matchPrice = p.price >= minPrice && p.price <= maxPrice;
       const matchSearch =
         !q ||
         p.name.toLowerCase().includes(q) ||
         p.description.toLowerCase().includes(q) ||
         p.category.toLowerCase().includes(q);
-      return matchCat && matchPrice && matchSearch;
+      return matchCat && matchSearch;
     });
-  }, [products, category, minPrice, maxPrice, search]);
+  }, [products, category, search]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const pageItems = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -73,23 +61,12 @@ export function CatalogView() {
           setCategory(c);
           setPage(1);
         }}
-        minPrice={minPrice}
-        maxPrice={maxPrice}
-        onMinPriceChange={(n) => {
-          setMinPrice(n);
-          setPage(1);
-        }}
-        onMaxPriceChange={(n) => {
-          setMaxPrice(n);
-          setPage(1);
-        }}
         search={search}
         onSearchChange={(v) => {
           setSearch(v);
           setSearchQuery(v);
           setPage(1);
         }}
-        priceCeiling={priceCeiling}
       />
 
       <div className="flex items-center justify-between">
@@ -102,7 +79,7 @@ export function CatalogView() {
         <div className="rounded-2xl border border-dashed border-forest/20 bg-white px-6 py-16 text-center shadow-sm">
           <p className="text-lg font-medium text-forest">Sin resultados</p>
           <p className="mt-1 text-base text-ink/60">
-            Prueba ajustando categoría, precio o búsqueda.
+            Ajusta la categoría o la búsqueda.
           </p>
         </div>
       ) : (

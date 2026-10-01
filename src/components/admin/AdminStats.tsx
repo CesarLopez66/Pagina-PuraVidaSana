@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, Gift, PackageX, ShoppingBag } from "lucide-react";
+import { Gift, Package, ShoppingBag } from "lucide-react";
 import { useStore } from "@/store/useStore";
 
 export function AdminStats() {
@@ -9,8 +9,6 @@ export function AdminStats() {
   const wheelLeads = useStore((s) => s.wheelLeads);
 
   const pendingOrders = orders.filter((o) => o.status === "Pendiente").length;
-  const lowStock = products.filter((p) => p.stock > 0 && p.stock < 5).length;
-  const outOfStock = products.filter((p) => p.stock <= 0).length;
 
   const stats = [
     {
@@ -20,16 +18,10 @@ export function AdminStats() {
       accent: pendingOrders > 0 ? "text-amber-600" : "text-forest",
     },
     {
-      label: "Stock bajo",
-      value: lowStock,
-      icon: AlertTriangle,
-      accent: lowStock > 0 ? "text-amber-600" : "text-forest",
-    },
-    {
-      label: "Agotados",
-      value: outOfStock,
-      icon: PackageX,
-      accent: outOfStock > 0 ? "text-red-600" : "text-forest",
+      label: "Productos en catálogo",
+      value: products.length,
+      icon: Package,
+      accent: "text-forest",
     },
     {
       label: "Leads de la ruleta",
@@ -40,7 +32,7 @@ export function AdminStats() {
   ];
 
   return (
-    <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="mb-8 grid gap-4 sm:grid-cols-3">
       {stats.map((s) => {
         const Icon = s.icon;
         return (

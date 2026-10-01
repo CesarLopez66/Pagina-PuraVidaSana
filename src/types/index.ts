@@ -64,6 +64,74 @@ export interface StoreInfo {
   shippingFee: number;
 }
 
+export interface HeroContent {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  footnote: string;
+  backgroundImage: string;
+}
+
+export interface AboutPillar {
+  title: string;
+  text: string;
+}
+
+export interface AboutContent {
+  eyebrow: string;
+  title: string;
+  intro: string;
+  pillars: AboutPillar[];
+}
+
+export interface BenefitItem {
+  title: string;
+  text: string;
+}
+
+export interface BenefitsContent {
+  eyebrow: string;
+  title: string;
+  items: BenefitItem[];
+}
+
+export interface FooterContent {
+  description: string;
+}
+
+export interface NavContent {
+  logoUrl: string;
+  brandName: string;
+  brandTagline: string;
+  home: string;
+  catalog: string;
+  about: string;
+  searchPlaceholder: string;
+}
+
+export interface TypographyContent {
+  body: string;
+  display: string;
+  script: string;
+}
+
+export interface CustomFont {
+  id: string;
+  label: string;
+  url: string;
+  format: "woff2" | "woff" | "truetype" | "opentype";
+}
+
+export interface SiteContent {
+  nav: NavContent;
+  typography: TypographyContent;
+  customFonts: CustomFont[];
+  hero: HeroContent;
+  about: AboutContent;
+  benefits: BenefitsContent;
+  footer: FooterContent;
+}
+
 export interface Branch {
   id: string;
   name: string;

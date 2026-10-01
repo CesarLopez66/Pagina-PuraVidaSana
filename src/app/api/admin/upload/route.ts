@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { isAdminAuthenticated } from "@/lib/admin/auth";
+import { saveLocalUpload } from "@/lib/local-storage-server";
 import { getServiceClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
@@ -45,20 +46,30 @@ export async function POST(request: NextRequest) {
 
   const path = `${Date.now()}-${crypto.randomUUID()}.${ext}`;
 
-  const { error } = await getServiceClient()
-    .storage.from("product-images")
-    .upload(path, await file.arrayBuffer(), { contentType: file.type });
+  const bytes = await file.arrayBuffer();
 
-  if (error) {
+  try {
+    const { error } = await getServiceClient()
+      .storage.from("product-images")
+      .upload(path, bytes, { contentType: file.type });
+
+    if (!error) {
+      const {
+        data: { publicUrl },
+      } = getServiceClient().storage.from("product-images").getPublicUrl(path);
+      return NextResponse.json({ ok: true, url: publicUrl });
+    }
+  } catch {
+    // Supabase no responde: se guarda en el disco del servidor.
+  }
+
+  try {
+    const url = await saveLocalUpload(path, bytes);
+    return NextResponse.json({ ok: true, url });
+  } catch {
     return NextResponse.json(
       { ok: false, message: "No se pudo subir la imagen." },
       { status: 500 }
     );
   }
-
-  const {
-    data: { publicUrl },
-  } = getServiceClient().storage.from("product-images").getPublicUrl(path);
-
-  return NextResponse.json({ ok: true, url: publicUrl });
 }

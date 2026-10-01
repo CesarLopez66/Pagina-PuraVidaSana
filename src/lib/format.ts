@@ -1,5 +1,12 @@
 import type { ShippingInfo, StockStatus } from "@/types";
 
+export function productWhatsAppUrl(phone: string, productName: string): string {
+  const text = encodeURIComponent(
+    `Hola Casa de Pura Vida Sana, me interesa "${productName}". ¿Me pueden dar más información?`
+  );
+  return `https://wa.me/${phone}?text=${text}`;
+}
+
 export function formatBs(amount: number): string {
   return `Bs. ${amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
 }

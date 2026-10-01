@@ -1,48 +1,27 @@
 "use client";
 
-import { useState } from "react";
-import { Check, Minus, Plus, ShoppingCart } from "lucide-react";
+import { Check, MessageCircle } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { ProductCarousel } from "@/components/catalog/ProductCarousel";
-import { formatBs, getStockStatus, stockStatusClasses } from "@/lib/format";
+import { productWhatsAppUrl } from "@/lib/format";
 import { useStore } from "@/store/useStore";
 
 export function ProductDetailModal() {
   const selectedProductId = useStore((s) => s.selectedProductId);
   const setSelectedProduct = useStore((s) => s.setSelectedProduct);
+  const whatsapp = useStore((s) => s.storeInfo.whatsapp);
   const product = useStore((s) =>
     selectedProductId ? s.getProduct(selectedProductId) : undefined
   );
-  const addToCart = useStore((s) => s.addToCart);
-  const [qty, setQty] = useState(1);
-  const [message, setMessage] = useState<string | null>(null);
-  const [lastProductId, setLastProductId] = useState(selectedProductId);
-
-  if (selectedProductId !== lastProductId) {
-    setLastProductId(selectedProductId);
-    setQty(1);
-    setMessage(null);
-  }
 
   if (!product) return null;
 
-  const status = getStockStatus(product.stock);
-  const disabled = product.stock <= 0;
   const images =
     product.images && product.images.length > 0
       ? product.images
       : [product.image];
-
-  const handleAdd = () => {
-    const result = addToCart(product.id, qty);
-    if (!result.ok && result.message) {
-      setMessage(result.message);
-      return;
-    }
-    setSelectedProduct(null);
-  };
 
   return (
     <Modal
@@ -60,7 +39,6 @@ export function ProductDetailModal() {
           </p>
 
           <div className="mt-2 flex flex-wrap items-center gap-2">
-            <Badge className={stockStatusClasses(status)}>{status}</Badge>
             {product.featured && <Badge variant="gold-soft">Destacado</Badge>}
           </div>
 
@@ -77,10 +55,7 @@ export function ProductDetailModal() {
             </div>
           )}
 
-          <p className="mt-4 text-2xl font-bold text-forest">
-            {formatBs(product.price)}
-          </p>
-          <p className="mt-1 text-sm leading-relaxed text-ink/60">
+          <p className="mt-4 text-sm leading-relaxed text-ink/60">
             {product.description}
           </p>
 
@@ -98,43 +73,18 @@ export function ProductDetailModal() {
             </ul>
           )}
 
-          <div className="mt-auto flex items-center gap-3 pt-6">
-            <div className="flex items-center rounded-xl border border-forest/15">
-              <button
-                type="button"
-                onClick={() => setQty((q) => Math.max(1, q - 1))}
-                className="p-2.5 text-forest"
-                aria-label="Reducir cantidad"
-              >
-                <Minus size={14} className="pop-glow hover:text-leaf" />
-              </button>
-              <span className="w-8 text-center text-sm font-semibold">
-                {qty}
-              </span>
-              <button
-                type="button"
-                onClick={() =>
-                  setQty((q) => Math.min(product.stock, q + 1))
-                }
-                className="p-2.5 text-forest"
-                aria-label="Aumentar cantidad"
-              >
-                <Plus size={14} className="pop-glow hover:text-leaf" />
-              </button>
-            </div>
-            <Button
-              variant={disabled ? "outline" : "secondary"}
-              disabled={disabled}
-              onClick={handleAdd}
-              className="flex-1"
+          <div className="mt-auto pt-6">
+            <a
+              href={productWhatsAppUrl(whatsapp, product.name)}
+              target="_blank"
+              rel="noreferrer"
             >
-              <ShoppingCart size={16} />
-              {disabled ? "Agotado" : "Añadir al carrito"}
-            </Button>
+              <Button variant="secondary" className="w-full">
+                <MessageCircle size={16} />
+                Consultar por WhatsApp
+              </Button>
+            </a>
           </div>
-          {message && (
-            <p className="mt-2 text-xs text-amber-700">{message}</p>
-          )}
         </div>
       </div>
     </Modal>

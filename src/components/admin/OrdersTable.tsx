@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { AlertTriangle, Download, Trash2 } from "lucide-react";
+import { Download, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Pagination, PAGE_SIZE } from "@/components/ui/Pagination";
@@ -27,27 +27,6 @@ export function OrdersTable() {
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<OrderStatus | "Todos">("Todos");
   const [page, setPage] = useState(1);
-
-  const overcommitted = useMemo(() => {
-    const pendingQtyByProduct = new Map<string, number>();
-    for (const order of orders) {
-      if (order.status !== "Pendiente") continue;
-      for (const item of order.items) {
-        pendingQtyByProduct.set(
-          item.productId,
-          (pendingQtyByProduct.get(item.productId) ?? 0) + item.quantity
-        );
-      }
-    }
-    const warnings: { name: string; requested: number; stock: number }[] = [];
-    for (const [productId, requested] of pendingQtyByProduct) {
-      const product = products.find((p) => p.id === productId);
-      if (product && requested > product.stock) {
-        warnings.push({ name: product.name, requested, stock: product.stock });
-      }
-    }
-    return warnings;
-  }, [orders, products]);
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase().trim();
@@ -90,24 +69,6 @@ export function OrdersTable() {
 
   return (
     <div className="space-y-4">
-      {overcommitted.length > 0 && (
-        <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-          <AlertTriangle size={18} className="mt-0.5 shrink-0" />
-          <div>
-            <p className="font-semibold">
-              Hay pedidos pendientes que suman más que el stock disponible:
-            </p>
-            <ul className="mt-1 list-disc pl-4">
-              {overcommitted.map((w) => (
-                <li key={w.name}>
-                  {w.name}: pedido {w.requested}, stock {w.stock}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      )}
-
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap gap-2">
           <input

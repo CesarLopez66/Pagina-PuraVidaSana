@@ -3,7 +3,6 @@
 import { usePathname } from "next/navigation";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { CartDrawer } from "@/components/layout/CartDrawer";
 import { WhatsAppButton } from "@/components/layout/WhatsAppButton";
 import { ProductDetailModal } from "@/components/catalog/ProductDetailModal";
 import { WheelButton } from "@/components/wheel/WheelButton";
@@ -25,7 +24,6 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
-      <CartDrawer />
       <ProductDetailModal />
       <WhatsAppButton />
       <WheelButton />

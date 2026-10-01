@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useStore } from "@/store/useStore";
 
 interface LogoProps {
   size?: "sm" | "md" | "lg";
@@ -17,6 +20,12 @@ const sizes: Record<"sm" | "md" | "lg", { width: number; height: number }> = {
 
 export function Logo({ size = "md", onDark = false }: LogoProps) {
   const { width, height } = sizes[size];
+  const logoUrl = useStore((s) => s.siteContent.nav?.logoUrl) || "/logo.png";
+  const storeName = useStore((s) => s.storeInfo.name);
+  // Hasta saber qué logo está guardado se reserva el espacio vacío; si no,
+  // se ve un instante el logo por defecto antes del configurado.
+  const ready = useStore((s) => s.siteContentReady);
+  const isStatic = logoUrl.startsWith("/") && !logoUrl.startsWith("/api/");
 
   return (
     <Link href="/" className="group inline-flex items-center">
@@ -27,13 +36,21 @@ export function Logo({ size = "md", onDark = false }: LogoProps) {
             : "inline-flex transition group-hover:scale-105"
         }
       >
-        <Image
-          src="/logo.png"
-          alt="Casa de Pura Vida Sana"
-          width={width}
-          height={height}
-          className="block"
-        />
+        {ready ? (
+          <Image
+            key={logoUrl}
+            src={logoUrl}
+            alt={storeName || "Casa de Pura Vida Sana"}
+            width={width}
+            height={height}
+            className="block object-contain"
+            style={{ width, height }}
+            loading="eager"
+            unoptimized={!isStatic}
+          />
+        ) : (
+          <span className="block" style={{ width, height }} aria-hidden />
+        )}
       </span>
     </Link>
   );

@@ -5,21 +5,22 @@ import {
   ClipboardList,
   Gauge,
   Gift,
+  PanelsTopLeft,
   Settings,
   Warehouse,
 } from "lucide-react";
 import { AdminStats } from "@/components/admin/AdminStats";
+import { SiteContentForm } from "@/components/admin/SiteContentForm";
 import { StoreSettingsForm } from "@/components/admin/StoreSettingsForm";
 import { WheelPrizeSettings } from "@/components/admin/WheelPrizeSettings";
 import { WheelStatusSettings } from "@/components/admin/WheelStatusSettings";
 import { OrdersTable } from "@/components/admin/OrdersTable";
 import { ProductTable } from "@/components/admin/ProductTable";
 import { WheelLeadsTable } from "@/components/admin/WheelLeadsTable";
-import { Badge } from "@/components/ui/Badge";
-import { formatBs, getStockStatus, stockStatusClasses } from "@/lib/format";
+import { formatBs } from "@/lib/format";
 import { useStore } from "@/store/useStore";
 
-type TabKey = "resumen" | "pedidos" | "inventario" | "ruleta" | "negocio";
+type TabKey = "resumen" | "pedidos" | "inventario" | "sitio" | "ruleta" | "negocio";
 
 export default function AdminPage() {
   const [tab, setTab] = useState<TabKey>("resumen");
@@ -31,12 +32,8 @@ export default function AdminPage() {
   const pendingOrdersList = orders
     .filter((o) => o.status === "Pendiente")
     .slice(0, 5);
-  const lowStockList = products
-    .filter((p) => p.stock < 5)
-    .sort((a, b) => a.stock - b.stock)
-    .slice(0, 5);
+  const recentProducts = products.slice(0, 5);
   const pendingOrders = orders.filter((o) => o.status === "Pendiente").length;
-  const lowOrOutOfStock = products.filter((p) => p.stock < 5).length;
   const wheelLeadsCount = wheelLeads.length;
 
   const tabs: {
@@ -47,7 +44,8 @@ export default function AdminPage() {
   }[] = [
     { key: "resumen", label: "Resumen", icon: Gauge },
     { key: "pedidos", label: "Pedidos", icon: ClipboardList, count: pendingOrders },
-    { key: "inventario", label: "Inventario", icon: Warehouse, count: lowOrOutOfStock },
+    { key: "inventario", label: "Inventario", icon: Warehouse, count: products.length },
+    { key: "sitio", label: "Sitio", icon: PanelsTopLeft },
     { key: "ruleta", label: "Ruleta", icon: Gift, count: wheelLeadsCount },
     { key: "negocio", label: "Negocio", icon: Settings },
   ];
@@ -61,10 +59,10 @@ export default function AdminPage() {
             Inventario / Admin
           </h1>
           <p className="mt-2 max-w-2xl text-ink/65">
-            El inventario intenta guardarse en Supabase. Si ese proyecto no
-            está disponible, los cambios quedan en este servidor para que
-            puedas seguir cargando el catálogo. El stock bajo (&lt; 5) se
-            marca automáticamente.
+            El catálogo intenta guardarse en Supabase. Si ese proyecto no
+            está disponible, los cambios quedan en este servidor. Los
+            productos se consultan por WhatsApp. El texto del inicio y de
+            Nosotros se edita en Sitio.
           </p>
         </div>
 
@@ -147,7 +145,7 @@ export default function AdminPage() {
             <section className="rounded-2xl border border-forest/10 bg-white p-5 shadow-sm">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="font-display text-xl font-bold text-forest">
-                  Stock bajo o agotado
+                  Productos recientes
                 </h2>
                 <button
                   onClick={() => setTab("inventario")}
@@ -156,13 +154,13 @@ export default function AdminPage() {
                   Ver todos →
                 </button>
               </div>
-              {lowStockList.length === 0 ? (
+              {recentProducts.length === 0 ? (
                 <p className="py-6 text-center text-sm text-ink/50">
-                  Todo el inventario tiene stock saludable.
+                  Todavía no hay productos en el catálogo.
                 </p>
               ) : (
                 <ul className="divide-y divide-soft">
-                  {lowStockList.map((p) => (
+                  {recentProducts.map((p) => (
                     <li
                       key={p.id}
                       className="flex items-center justify-between gap-3 py-3"
@@ -173,9 +171,6 @@ export default function AdminPage() {
                         </p>
                         <p className="text-xs text-ink/50">{p.category}</p>
                       </div>
-                      <Badge className={stockStatusClasses(getStockStatus(p.stock))}>
-                        {p.stock} un.
-                      </Badge>
                     </li>
                   ))}
                 </ul>
@@ -190,11 +185,8 @@ export default function AdminPage() {
               Pedidos por WhatsApp
             </h2>
             <p className="mb-4 text-sm text-ink/60">
-              Estos pedidos no descuentan stock automáticamente. Revisa cada
-              uno, confírmalo por WhatsApp y ajusta el stock manualmente en
-              Inventario. Si un cliente solicita que elimines sus datos
-              (derecho de eliminación, ver Términos y Privacidad), borra su
-              pedido aquí.
+              Si un cliente solicita que elimines sus datos (derecho de
+              eliminación, ver Términos y Privacidad), borra su pedido aquí.
             </p>
             <OrdersTable />
           </section>
@@ -206,6 +198,20 @@ export default function AdminPage() {
               Inventario
             </h2>
             <ProductTable />
+          </section>
+        )}
+
+        {tab === "sitio" && (
+          <section>
+            <h2 className="font-display mb-4 text-2xl font-bold text-forest">
+              Contenido del sitio
+            </h2>
+            <p className="mb-4 text-sm text-ink/60">
+              Cambia la tipografía, el navbar, la imagen y los textos de la
+              pantalla principal, y el contenido de la página Nosotros. Los
+              cambios se ven al instante en esta misma sesión del navegador.
+            </p>
+            <SiteContentForm />
           </section>
         )}
 

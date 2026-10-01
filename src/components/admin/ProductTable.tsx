@@ -6,7 +6,6 @@ import type { Product } from "@/types";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Pagination, PAGE_SIZE } from "@/components/ui/Pagination";
-import { formatBs, getStockStatus, stockStatusClasses } from "@/lib/format";
 import { useStore } from "@/store/useStore";
 import { ProductFormModal } from "@/components/admin/ProductFormModal";
 import { BulkImportModal } from "@/components/admin/BulkImportModal";
@@ -86,15 +85,12 @@ export function ProductTable() {
               <th className="px-4 py-3 font-semibold">ID</th>
               <th className="px-4 py-3 font-semibold">Nombre</th>
               <th className="px-4 py-3 font-semibold">Categoría</th>
-              <th className="px-4 py-3 font-semibold">Precio</th>
-              <th className="px-4 py-3 font-semibold">Stock</th>
-              <th className="px-4 py-3 font-semibold">Estado</th>
+              <th className="px-4 py-3 font-semibold">Destacado</th>
               <th className="px-4 py-3 font-semibold">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {pageItems.map((product) => {
-              const status = getStockStatus(product.stock);
               return (
                 <tr
                   key={product.id}
@@ -107,14 +103,12 @@ export function ProductTable() {
                     {product.name}
                   </td>
                   <td className="px-4 py-3 text-ink/70">{product.category}</td>
-                  <td className="px-4 py-3 font-semibold">
-                    {formatBs(product.price)}
-                  </td>
-                  <td className="px-4 py-3">{product.stock}</td>
                   <td className="px-4 py-3">
-                    <Badge className={stockStatusClasses(status)}>
-                      {status}
-                    </Badge>
+                    {product.featured ? (
+                      <Badge variant="gold-soft">Sí</Badge>
+                    ) : (
+                      <span className="text-ink/40">No</span>
+                    )}
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-1">
@@ -151,7 +145,7 @@ export function ProductTable() {
             {pageItems.length === 0 && (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={5}
                   className="px-4 py-10 text-center text-ink/50"
                 >
                   No hay productos que coincidan.

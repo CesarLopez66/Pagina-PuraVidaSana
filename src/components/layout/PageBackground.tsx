@@ -1,9 +1,14 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { DEFAULT_BACKGROUND } from "@/lib/site-content";
+import { useStore } from "@/store/useStore";
 
 export function PageBackground() {
   const imageRef = useRef<HTMLDivElement>(null);
+  const backgroundImage = useStore(
+    (s) => s.siteContent.hero.backgroundImage || DEFAULT_BACKGROUND
+  );
   const targetProgress = useRef(0);
   const currentProgress = useRef(0);
 
@@ -52,8 +57,7 @@ export function PageBackground() {
         ref={imageRef}
         className="h-full w-full scale-105 bg-cover blur-sm"
         style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1800&q=80')",
+          backgroundImage: `url('${backgroundImage}')`,
           backgroundPosition: "center 35%",
         }}
       />

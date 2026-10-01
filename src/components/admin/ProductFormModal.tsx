@@ -23,8 +23,6 @@ interface ProductFormModalProps {
 const empty = {
   name: "",
   category: "Suplementos" as Category,
-  price: 0,
-  stock: 0,
   description: "",
   image: "",
   featured: false,
@@ -52,8 +50,6 @@ export function ProductFormModal({
       setForm({
         name: product.name,
         category: product.category,
-        price: product.price,
-        stock: product.stock,
         description: product.description,
         image: product.image,
         featured: !!product.featured,
@@ -92,13 +88,13 @@ export function ProductFormModal({
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name.trim() || form.price < 0 || form.stock < 0 || !form.image) return;
+    if (!form.name.trim() || !form.image) return;
 
     const payload = {
       name: form.name,
       category: form.category,
-      price: form.price,
-      stock: form.stock,
+      price: product?.price ?? 0,
+      stock: product?.stock ?? 1,
       description: form.description,
       image: form.image,
       featured: form.featured,
@@ -179,41 +175,6 @@ export function ProductFormModal({
                 </option>
               ))}
             </select>
-          </label>
-
-          <label className="block">
-            <span className="mb-1.5 block text-xs font-semibold uppercase text-forest/70">
-              Precio (Bs.)
-            </span>
-            <input
-              type="number"
-              min={0}
-              step="0.01"
-              required
-              value={form.price}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, price: Number(e.target.value) }))
-              }
-              placeholder="Ej. 145"
-              className="w-full rounded-xl border border-forest/15 bg-surface px-3 py-2.5 text-sm outline-none focus:border-leaf"
-            />
-          </label>
-
-          <label className="block">
-            <span className="mb-1.5 block text-xs font-semibold uppercase text-forest/70">
-              Stock actual
-            </span>
-            <input
-              type="number"
-              min={0}
-              required
-              value={form.stock}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, stock: Number(e.target.value) }))
-              }
-              placeholder="Ej. 32"
-              className="w-full rounded-xl border border-forest/15 bg-surface px-3 py-2.5 text-sm outline-none focus:border-leaf"
-            />
           </label>
 
           <label className="block">

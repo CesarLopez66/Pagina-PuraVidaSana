@@ -31,13 +31,6 @@ export default function TerminosPage() {
           <p className="mt-2 text-xs text-ink/45">
             Última actualización: {LAST_UPDATED}
           </p>
-          <p className="mt-4 rounded-xl border border-amber-200/60 bg-amber-50/70 px-4 py-3 text-sm text-amber-800">
-            Este es contenido de plantilla para un sitio de demostración. Antes
-            de usarlo en producción, un profesional legal debería revisarlo y
-            adaptarlo a la normativa boliviana vigente (incluida la Ley de
-            Protección de Datos Personales).
-          </p>
-
           <div className="mt-8 space-y-8 text-sm leading-relaxed text-ink/75">
             <section>
               <h2 className="mb-2 text-lg font-semibold text-forest">

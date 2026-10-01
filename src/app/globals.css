@@ -31,7 +31,7 @@ html {
 body {
   background: var(--white);
   color: var(--ink);
-  font-family: var(--font-montserrat), "Segoe UI", sans-serif;
+  font-family: var(--font-body-active, var(--font-montserrat)), "Segoe UI", sans-serif;
 }
 
 ::selection {
@@ -211,5 +211,13 @@ body {
 
 .pop-glow-active {
   @apply scale-110 drop-shadow-[0_0_8px_currentColor];
+}
+
+.font-display {
+  font-family: var(--font-display-active, var(--font-fredoka)), "Segoe UI", sans-serif;
+}
+
+.font-script {
+  font-family: var(--font-script-active, var(--font-kaushan)), cursive;
 }
 

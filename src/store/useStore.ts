@@ -8,9 +8,11 @@ import type {
   OrderStatus,
   Product,
   ShippingInfo,
+  SiteContent,
   StoreInfo,
   WheelLead,
 } from "@/types";
+import { defaultSiteContent, mergeSiteContent } from "@/lib/site-content";
 import { WHEEL_PRIZES, type WheelPrize } from "@/lib/wheel";
 
 interface StoreState {
@@ -21,6 +23,7 @@ interface StoreState {
   lastOrder: Order | null;
   orders: Order[];
   storeInfo: StoreInfo;
+  siteContent: SiteContent;
   wheelPrizes: WheelPrize[];
   isCartOpen: boolean;
   isCheckoutOpen: boolean;
@@ -32,6 +35,7 @@ interface StoreState {
   searchQuery: string;
   hydrated: boolean;
   setHydrated: (value: boolean) => void;
+  siteContentReady: boolean;
   setSearchQuery: (query: string) => void;
   setCartOpen: (open: boolean) => void;
   setCheckoutOpen: (open: boolean) => void;
@@ -43,6 +47,8 @@ interface StoreState {
   resetWheelPlayed: () => void;
   clearMyPersonalData: () => void;
   updateStoreInfo: (updates: Partial<StoreInfo>) => void;
+  updateSiteContent: (content: SiteContent) => Promise<{ ok: boolean; message?: string }>;
+  fetchSiteContent: () => Promise<void>;
   updateWheelPrizes: (prizes: WheelPrize[]) => void;
   deleteOrder: (id: string) => void;
   addToCart: (productId: string, quantity?: number) => { ok: boolean; message?: string };
@@ -72,9 +78,9 @@ const initialStoreInfo: StoreInfo = {
   whatsapp: mockData.storeInfo.whatsapp,
   email: mockData.storeInfo.email,
   branches: mockData.storeInfo.branches as Branch[],
-  instagram: "https://instagram.com",
-  facebook: "https://facebook.com",
-  tiktok: "https://tiktok.com",
+  instagram: "",
+  facebook: "",
+  tiktok: "",
   shippingFee: 0,
 };
 
@@ -88,6 +94,7 @@ export const useStore = create<StoreState>()(
       lastOrder: null,
       orders: [],
       storeInfo: initialStoreInfo,
+      siteContent: defaultSiteContent,
       wheelPrizes: WHEEL_PRIZES,
       isCartOpen: false,
       isCheckoutOpen: false,
@@ -98,6 +105,7 @@ export const useStore = create<StoreState>()(
       isWheelOpen: false,
       searchQuery: "",
       hydrated: false,
+      siteContentReady: false,
 
       setHydrated: (value) => set({ hydrated: value }),
       setSearchQuery: (query) => set({ searchQuery: query }),
@@ -107,6 +115,42 @@ export const useStore = create<StoreState>()(
       setWheelOpen: (open) => set({ isWheelOpen: open }),
       updateStoreInfo: (updates) =>
         set((state) => ({ storeInfo: { ...state.storeInfo, ...updates } })),
+      updateSiteContent: async (content) => {
+        const merged = mergeSiteContent(content);
+        set({ siteContent: merged });
+        try {
+          const res = await fetch("/api/site-content", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(merged),
+          });
+          if (!res.ok) {
+            return {
+              ok: false,
+              message:
+                res.status === 401
+                  ? "Tu sesión de administrador expiró. Vuelve a iniciar sesión."
+                  : "No se pudo guardar en el servidor.",
+            };
+          }
+          return { ok: true };
+        } catch {
+          return { ok: false, message: "No se pudo conectar con el servidor." };
+        }
+      },
+      fetchSiteContent: async () => {
+        try {
+          const res = await fetch("/api/site-content", { cache: "no-store" });
+          const data = await res.json();
+          if (data.ok && data.content) {
+            set({ siteContent: mergeSiteContent(data.content) });
+          }
+        } catch {
+          // Sin servidor se mantiene la copia guardada en el navegador.
+        } finally {
+          set({ siteContentReady: true });
+        }
+      },
       updateWheelPrizes: (prizes) => set({ wheelPrizes: prizes }),
       setWheelEnabled: (enabled) => set({ wheelEnabled: enabled }),
       resetWheelPlayed: () => set({ hasPlayedWheel: false }),
@@ -348,6 +392,7 @@ export const useStore = create<StoreState>()(
         lastOrder: state.lastOrder,
         orders: state.orders,
         storeInfo: state.storeInfo,
+        siteContent: state.siteContent,
         wheelPrizes: state.wheelPrizes,
         wheelLeads: state.wheelLeads,
         hasPlayedWheel: state.hasPlayedWheel,
@@ -387,6 +432,7 @@ export const useStore = create<StoreState>()(
           };
         }
 
+        state.siteContent = mergeSiteContent(state.siteContent);
         state.setHydrated(true);
       },
     }

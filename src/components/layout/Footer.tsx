@@ -4,6 +4,7 @@ import type { SVGProps } from "react";
 import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
+import { defaultSiteContent } from "@/lib/site-content";
 import { useStore } from "@/store/useStore";
 
 function IconInstagram({
@@ -72,24 +73,39 @@ function IconTikTok({
   );
 }
 
+function isProfileLink(href: string | undefined): href is string {
+  if (!href) return false;
+  try {
+    return new URL(href).pathname.replace(/\/$/, "").length > 0;
+  } catch {
+    return false;
+  }
+}
+
 export function Footer() {
   const storeInfo = useStore((s) => s.storeInfo);
+  const footerDescription =
+    useStore((s) => s.siteContent.footer?.description) ||
+    defaultSiteContent.footer.description;
 
   const socialLinks = [
     { name: "Instagram", href: storeInfo.instagram, Icon: IconInstagram },
     { name: "Facebook", href: storeInfo.facebook, Icon: IconFacebook },
     { name: "TikTok", href: storeInfo.tiktok, Icon: IconTikTok },
-  ];
+  ].filter((link) => isProfileLink(link.href));
 
   return (
     <footer className="footer-glow relative mt-auto overflow-hidden bg-forest text-white">
       <div className="mx-auto max-w-7xl px-4 py-9 md:px-6">
-        <div className="grid gap-10 sm:grid-cols-3">
+        <div
+          className={`grid gap-10 ${
+            socialLinks.length > 0 ? "sm:grid-cols-3" : "sm:grid-cols-2"
+          }`}
+        >
           <div className="flex flex-col items-center text-center">
             <Logo size="lg" onDark />
             <p className="mt-4 max-w-sm text-base leading-relaxed text-white/70">
-              Suplementos, vitaminas y cosmética natural para tu bienestar
-              diario en La Paz y todo Bolivia.
+              {footerDescription}
             </p>
           </div>
 
@@ -120,6 +136,7 @@ export function Footer() {
             </ul>
           </div>
 
+          {socialLinks.length > 0 && (
           <div className="sm:border-l sm:border-white/10 sm:pl-10">
             <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-leaf">
               Redes sociales
@@ -141,11 +158,12 @@ export function Footer() {
               ))}
             </div>
           </div>
+          )}
         </div>
       </div>
 
       <div className="mt-6 border-t border-white/10 px-4 py-3 text-center text-sm text-white/45 md:px-6">
-        © {new Date().getFullYear()} Casa de Pura Vida Sana · Demo comercial ·{" "}
+        © {new Date().getFullYear()} Casa de Pura Vida Sana ·{" "}
         <Link href="/terminos" className="pop-glow hover:text-leaf">
           Términos y Privacidad
         </Link>{" "}

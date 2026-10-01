@@ -1,6 +1,6 @@
 # Casa de Pura Vida Sana
 
-Plataforma front-end demo para la tienda de suplementos, vitaminas y productos naturales en La Paz, Bolivia.
+Tienda en línea de suplementos, vitaminas y productos naturales en La Paz, Bolivia.
 
 ## Stack
 
@@ -25,7 +25,7 @@ Abre [http://localhost:3000](http://localhost:3000).
 - `/catalogo` — Filtros, búsqueda y carrito
 - `/inventario` — CRUD local de productos
 - Checkout QR boliviano con temporizador, comprobante y WhatsApp
-- Persistencia: `src/data/mockData.json` → Zustand → `localStorage`
+- Catálogo en Supabase, con copia local si el servicio no responde
 
 ## Paleta
 
