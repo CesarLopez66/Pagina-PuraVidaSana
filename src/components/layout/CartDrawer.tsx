@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { ProductImage } from "@/components/ui/ProductImage";
 import { Minus, Plus, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
@@ -75,13 +75,11 @@ export function CartDrawer() {
                         className="flex gap-3 border-b border-soft pb-4"
                       >
                         <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-soft">
-                          <Image
+                          <ProductImage
                             src={product.image}
                             alt={product.name}
-                            fill
-                            className="object-cover"
                             sizes="80px"
-                            unoptimized
+                            compact
                           />
                         </div>
                         <div className="min-w-0 flex-1">

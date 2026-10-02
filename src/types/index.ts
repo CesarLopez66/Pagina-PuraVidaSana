@@ -81,7 +81,12 @@ export interface AboutContent {
   eyebrow: string;
   title: string;
   intro: string;
-  pillars: AboutPillar[];
+  // Párrafos separados por una línea en blanco.
+  story: string;
+  mission: string;
+  vision: string;
+  values: AboutPillar[];
+  philosophy: string;
 }
 
 export interface BenefitItem {

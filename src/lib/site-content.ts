@@ -1,7 +1,11 @@
 import type { CustomFont, SiteContent } from "@/types";
 import { CUSTOM_FONT_FORMATS, isCustomFontId, isFontId } from "@/lib/fonts";
 
-export const DEFAULT_BACKGROUND =
+export const DEFAULT_BACKGROUND = "/fondo-inicio.jpg";
+
+// Fondo anterior (foto de bosque). Si lo guardado sigue siendo esa URL, nadie
+// lo cambió desde el panel y se reemplaza por el fondo nuevo.
+const LEGACY_BACKGROUND =
   "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1800&q=80";
 
 // El inicio pasó de "frase chica + título largo" a "nombre grande + lema +
@@ -9,10 +13,64 @@ export const DEFAULT_BACKGROUND =
 // se reemplazan los tres textos por los nuevos para que encajen en ese orden.
 const LEGACY_HERO_TITLE = "Salud integral natural en el corazón de La Paz";
 
-function migrateHero(hero: SiteContent["hero"]): SiteContent["hero"] {
-  if (hero.title !== LEGACY_HERO_TITLE) return hero;
+// Textos de la versión anterior a la identidad institucional (misión, visión,
+// valores). Si lo guardado sigue siendo exactamente uno de estos, nadie lo
+// editó desde el panel y se reemplaza por el texto nuevo; lo editado se respeta.
+const LEGACY = {
+  heroSubtitle:
+    "Productos naturales, suplementos y vitaminas para acompañarte en tu bienestar.",
+  aboutTitle: "Casa de Pura Vida Sana",
+  aboutIntro:
+    "Nacimos en La Paz con una idea simple: acercar bienestar natural confiable a familias bolivianas, con asesoría cercana y productos seleccionados para la vida en altura.",
+  benefitTitle: "Productos 100% Naturales",
+  benefitText: "Selección cuidada de fórmulas limpia y origen confiable.",
+  footer:
+    "Suplementos, vitaminas y cosmética natural para tu bienestar diario en La Paz y todo Bolivia.",
+};
+
+function upgradeLegacy(
+  value: string | undefined,
+  legacy: string,
+  next: string
+): string | undefined {
+  return value === legacy ? next : value;
+}
+
+function migrateHero(saved: SiteContent["hero"]): SiteContent["hero"] {
+  const hero = {
+    ...saved,
+    backgroundImage:
+      upgradeLegacy(saved.backgroundImage, LEGACY_BACKGROUND, DEFAULT_BACKGROUND) ??
+      DEFAULT_BACKGROUND,
+  };
+  if (hero.title !== LEGACY_HERO_TITLE) {
+    return {
+      ...hero,
+      subtitle:
+        upgradeLegacy(hero.subtitle, LEGACY.heroSubtitle, defaultSiteContent.hero.subtitle) ??
+        defaultSiteContent.hero.subtitle,
+    };
+  }
   const { eyebrow, title, subtitle } = defaultSiteContent.hero;
   return { ...hero, eyebrow, title, subtitle };
+}
+
+function migrateAbout(about: Partial<SiteContent["about"]> | undefined): SiteContent["about"] {
+  const d = defaultSiteContent.about;
+  // La versión anterior traía título e introducción pensados para tres
+  // tarjetas; si siguen sin editar, se pasa entero al contenido nuevo.
+  const legacy = about?.title === LEGACY.aboutTitle && about?.intro === LEGACY.aboutIntro;
+  const values = about?.values?.filter((v) => v && (v.title || v.text));
+  return {
+    eyebrow: about?.eyebrow ?? d.eyebrow,
+    title: legacy ? d.title : about?.title ?? d.title,
+    intro: legacy ? d.intro : about?.intro ?? d.intro,
+    story: about?.story ?? d.story,
+    mission: about?.mission ?? d.mission,
+    vision: about?.vision ?? d.vision,
+    values: fixedItems(values, d.values),
+    philosophy: about?.philosophy ?? d.philosophy,
+  };
 }
 
 export const defaultSiteContent: SiteContent = {
@@ -35,29 +93,47 @@ export const defaultSiteContent: SiteContent = {
     eyebrow: "Pura Vida Sana",
     title: "Tu casa natural, más cerca de ti.",
     subtitle:
-      "Productos naturales, suplementos y vitaminas para acompañarte en tu bienestar.",
+      "Productos y suplementos naturales y orgánicos, con una atención cercana que escucha, orienta y recomienda según lo que realmente necesitas.",
     footnote: "Envíos a La Paz y todo el país · Pedido y pago por WhatsApp",
     backgroundImage: DEFAULT_BACKGROUND,
   },
   about: {
     eyebrow: "Nuestra esencia",
-    title: "Casa de Pura Vida Sana",
+    title: "Tu casa natural, más cerca de ti.",
     intro:
-      "Nacimos en La Paz con una idea simple: acercar bienestar natural confiable a familias bolivianas, con asesoría cercana y productos seleccionados para la vida en altura.",
-    pillars: [
+      "Pura Vida Sana es una empresa boliviana dedicada a la comercialización de productos y suplementos naturales y orgánicos, comprometida con el bienestar y el cuidado de las personas.",
+    story: [
+      "Nació hace 18 años de la mano de Julieta Cortez Camino, quien contaba con experiencia en el ámbito de los productos naturales y dio origen a una empresa basada en la atención cercana y el compromiso con las personas.",
+      "Hoy, Pura Vida Sana continúa ese legado, buscando acercar alternativas naturales a personas de todas las edades y acompañarlas mediante una atención orientada a sus necesidades. Más que ofrecer productos, buscamos escuchar, orientar y recomendar de manera responsable, entendiendo que cada persona tiene necesidades diferentes.",
+      "Actualmente contamos con dos sucursales en La Paz y una tienda online, con el propósito de seguir creciendo y acercando nuestros productos a más personas en Bolivia.",
+    ].join("\n\n"),
+    mission:
+      "Brindar productos y suplementos naturales y orgánicos que contribuyan al bienestar de las personas, ofreciendo una atención cercana, responsable y orientada a sus necesidades. Buscamos promover hábitos saludables y facilitar el acceso a alternativas naturales, manteniendo como principios fundamentales la confianza, la calidad, el servicio, el compromiso y el bienestar.",
+    vision:
+      "Consolidarnos como una empresa referente en productos y suplementos naturales en Bolivia, creciendo de manera sostenible y acercando Pura Vida Sana a cada vez más personas mediante nuevas tiendas y canales de venta. A largo plazo, buscamos llevar nuestra propuesta más allá de Bolivia y expandirnos hacia otros países de Latinoamérica, manteniendo siempre la confianza, la calidad, el servicio, el compromiso y el bienestar que nos caracterizan.",
+    values: [
       {
-        title: "Hechos en altura",
-        text: "Entendemos el clima seco, el ritmo paceño y las necesidades reales de energía e hidratación.",
+        title: "Confianza",
+        text: "Construimos relaciones duraderas con nuestros clientes mediante transparencia, responsabilidad y recomendaciones pensadas para sus necesidades.",
       },
       {
-        title: "Natural primero",
-        text: "Priorizamos fórmulas limpias, cosméticos botánicos y suplementos de calidad verificable.",
+        title: "Calidad",
+        text: "Buscamos ofrecer productos naturales y suplementos seleccionados con responsabilidad y bajo criterios de calidad.",
       },
       {
-        title: "Comunidad local",
-        text: "Acompañamos a cada cliente con recomendaciones honestas y atención humana.",
+        title: "Servicio",
+        text: "Escuchamos y orientamos a nuestros clientes para ayudarles a encontrar alternativas acordes con sus necesidades.",
+      },
+      {
+        title: "Compromiso",
+        text: "Trabajamos para mantener el propósito con el que nació Pura Vida Sana y continuar construyendo sobre ese legado.",
+      },
+      {
+        title: "Bienestar",
+        text: "Nuestro trabajo busca contribuir al cuidado y bienestar de las personas mediante alternativas naturales y hábitos saludables.",
       },
     ],
+    philosophy: "No se trata de vender más, sino de ofrecer lo que realmente necesitas.",
   },
   benefits: {
     eyebrow: "Por qué elegirnos",
@@ -68,8 +144,8 @@ export const defaultSiteContent: SiteContent = {
         text: "Entrega local rápida y despacho nacional con seguimiento.",
       },
       {
-        title: "Productos 100% Naturales",
-        text: "Selección cuidada de fórmulas limpia y origen confiable.",
+        title: "Productos naturales y orgánicos",
+        text: "Seleccionados con responsabilidad y bajo criterios de calidad.",
       },
       {
         title: "Confirmación directa por WhatsApp",
@@ -79,7 +155,7 @@ export const defaultSiteContent: SiteContent = {
   },
   footer: {
     description:
-      "Suplementos, vitaminas y cosmética natural para tu bienestar diario en La Paz y todo Bolivia.",
+      "Productos y suplementos naturales y orgánicos para tu bienestar, con dos sucursales en La Paz y envíos a todo Bolivia.",
   },
 };
 
@@ -114,13 +190,14 @@ function sanitizeCustomFonts(value: unknown): CustomFont[] {
   return fonts;
 }
 
-function threeItems(
+// Siempre tantas tarjetas como trae el contenido por defecto.
+function fixedItems(
   value: { title?: string; text?: string }[] | undefined,
   fallback: { title: string; text: string }[]
 ) {
-  return [0, 1, 2].map((index) => ({
-    title: value?.[index]?.title ?? fallback[index].title,
-    text: value?.[index]?.text ?? fallback[index].text,
+  return fallback.map((item, index) => ({
+    title: value?.[index]?.title ?? item.title,
+    text: value?.[index]?.text ?? item.text,
   }));
 }
 
@@ -134,7 +211,11 @@ function pickFont(
 }
 
 export function mergeSiteContent(value: Partial<SiteContent> | undefined): SiteContent {
-  const pillars = value?.about?.pillars?.filter((p) => p && (p.title || p.text));
+  const benefitItems = value?.benefits?.items?.map((item) =>
+    item?.title === LEGACY.benefitTitle && item?.text === LEGACY.benefitText
+      ? defaultSiteContent.benefits.items[1]
+      : item
+  );
   const customFonts = sanitizeCustomFonts(value?.customFonts);
   return {
     nav: {
@@ -149,19 +230,19 @@ export function mergeSiteContent(value: Partial<SiteContent> | undefined): SiteC
     },
     customFonts,
     hero: migrateHero({ ...defaultSiteContent.hero, ...value?.hero }),
-    about: {
-      ...defaultSiteContent.about,
-      ...value?.about,
-      pillars: threeItems(pillars, defaultSiteContent.about.pillars),
-    },
+    about: migrateAbout(value?.about),
     benefits: {
       eyebrow: value?.benefits?.eyebrow ?? defaultSiteContent.benefits.eyebrow,
       title: value?.benefits?.title ?? defaultSiteContent.benefits.title,
-      items: threeItems(value?.benefits?.items, defaultSiteContent.benefits.items),
+      items: fixedItems(benefitItems, defaultSiteContent.benefits.items),
     },
     footer: {
       description:
-        value?.footer?.description ?? defaultSiteContent.footer.description,
+        upgradeLegacy(
+          value?.footer?.description,
+          LEGACY.footer,
+          defaultSiteContent.footer.description
+        ) ?? defaultSiteContent.footer.description,
     },
   };
 }

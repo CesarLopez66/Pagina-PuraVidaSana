@@ -55,7 +55,7 @@ export function PageBackground() {
     <div className="fixed inset-0 -z-10 overflow-hidden">
       <div
         ref={imageRef}
-        className="h-full w-full scale-105 bg-cover blur-sm"
+        className="h-full w-full bg-cover"
         style={{
           backgroundImage: `url('${backgroundImage}')`,
           backgroundPosition: "center 35%",

@@ -14,6 +14,12 @@ export function Hero() {
 
   return (
     <section className="relative isolate min-h-[88vh] overflow-hidden grain-overlay">
+      {/* Velo oscuro del lado del texto: el fondo es claro a la izquierda y
+          sin él los textos blancos se pierden. Los productos quedan nítidos. */}
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10 bg-gradient-to-b from-black/45 via-black/30 to-black/45 md:bg-gradient-to-r md:from-black/60 md:via-black/30 md:to-transparent"
+      />
       <div
         className={`relative mx-auto flex min-h-[88vh] max-w-7xl flex-col justify-center px-4 py-24 md:px-6 ${
           ready ? "" : "invisible"

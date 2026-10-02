@@ -13,11 +13,13 @@ function Field({
   value,
   onChange,
   multiline = false,
+  rows = 3,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   multiline?: boolean;
+  rows?: number;
 }) {
   const className =
     "w-full rounded-xl border border-forest/15 bg-surface px-3 py-2.5 text-sm outline-none focus:border-leaf";
@@ -28,7 +30,7 @@ function Field({
       </span>
       {multiline ? (
         <textarea
-          rows={3}
+          rows={rows}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className={className}
@@ -139,7 +141,7 @@ export function SiteContentForm() {
   const setHero = (key: keyof SiteContent["hero"], value: string) =>
     setForm((f) => ({ ...f, hero: { ...f.hero, [key]: value } }));
 
-  const setAbout = (key: "eyebrow" | "title" | "intro", value: string) =>
+  const setAbout = (key: Exclude<keyof SiteContent["about"], "values">, value: string) =>
     setForm((f) => ({ ...f, about: { ...f.about, [key]: value } }));
 
   const setBenefits = (key: "eyebrow" | "title", value: string) =>
@@ -159,12 +161,12 @@ export function SiteContentForm() {
   const setFooterDescription = (value: string) =>
     setForm((f) => ({ ...f, footer: { ...f.footer, description: value } }));
 
-  const setPillar = (index: number, updates: Partial<AboutPillar>) =>
+  const setValue = (index: number, updates: Partial<AboutPillar>) =>
     setForm((f) => ({
       ...f,
       about: {
         ...f.about,
-        pillars: f.about.pillars.map((p, i) =>
+        values: f.about.values.map((p, i) =>
           i === index ? { ...p, ...updates } : p
         ),
       },
@@ -495,8 +497,9 @@ export function SiteContentForm() {
             Página Nosotros
           </h3>
           <p className="mt-1 text-sm text-ink/60">
-            Encabezado y las tres tarjetas: Hechos en altura, Natural primero
-            y Comunidad local.
+            Encabezado, historia, misión, visión, valores y filosofía de
+            servicio. La introducción y la filosofía también se muestran en el
+            inicio.
           </p>
         </div>
         <Field
@@ -515,29 +518,61 @@ export function SiteContentForm() {
           onChange={(v) => setAbout("intro", v)}
           multiline
         />
-        <div className="grid gap-4 lg:grid-cols-3">
-          {form.about.pillars.map((pillar, index) => (
+        <Field
+          label="Nuestra historia (deja una línea en blanco entre párrafos)"
+          value={form.about.story}
+          onChange={(v) => setAbout("story", v)}
+          multiline
+          rows={8}
+        />
+        <div className="grid gap-4 lg:grid-cols-2">
+          <Field
+            label="Misión"
+            value={form.about.mission}
+            onChange={(v) => setAbout("mission", v)}
+            multiline
+            rows={6}
+          />
+          <Field
+            label="Visión"
+            value={form.about.vision}
+            onChange={(v) => setAbout("vision", v)}
+            multiline
+            rows={6}
+          />
+        </div>
+        <p className="pt-2 text-xs font-semibold uppercase text-forest/70">
+          Nuestros valores
+        </p>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {form.about.values.map((value, index) => (
             <div
               key={index}
               className="space-y-3 rounded-xl border border-forest/10 bg-surface p-4"
             >
               <p className="text-sm font-semibold text-forest">
-                Tarjeta {index + 1}
+                Valor {index + 1}
               </p>
               <Field
                 label="Título"
-                value={pillar.title}
-                onChange={(v) => setPillar(index, { title: v })}
+                value={value.title}
+                onChange={(v) => setValue(index, { title: v })}
               />
               <Field
                 label="Texto"
-                value={pillar.text}
-                onChange={(v) => setPillar(index, { text: v })}
+                value={value.text}
+                onChange={(v) => setValue(index, { text: v })}
                 multiline
               />
             </div>
           ))}
         </div>
+        <Field
+          label="Filosofía de servicio (sin comillas)"
+          value={form.about.philosophy}
+          onChange={(v) => setAbout("philosophy", v)}
+          multiline
+        />
       </section>
 
       <section className="space-y-4 rounded-2xl border border-forest/10 bg-white p-5 shadow-sm">

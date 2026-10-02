@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { ProductImage } from "@/components/ui/ProductImage";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 
@@ -20,13 +20,10 @@ export function ProductCarousel({
 
   return (
     <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-soft">
-      <Image
+      <ProductImage
         src={images[index]}
         alt={alt}
-        fill
-        className="object-cover"
         sizes="(max-width:768px) 100vw, 50vw"
-        unoptimized
       />
       {images.length > 1 && (
         <>

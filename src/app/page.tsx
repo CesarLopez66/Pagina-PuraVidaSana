@@ -6,6 +6,7 @@ import { Benefits } from "@/components/home/Benefits";
 import { FeaturedProducts } from "@/components/home/FeaturedProducts";
 import { Reviews } from "@/components/home/Reviews";
 import { Branches } from "@/components/home/Branches";
+import { Philosophy } from "@/components/home/Philosophy";
 
 export default function HomePage() {
   return (
@@ -16,6 +17,7 @@ export default function HomePage() {
       <Categories />
       <FeaturedProducts />
       <Benefits />
+      <Philosophy />
       <Reviews />
       <Branches />
     </>

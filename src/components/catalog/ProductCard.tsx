@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { ProductImage } from "@/components/ui/ProductImage";
 import { MessageCircle } from "lucide-react";
 import type { Product } from "@/types";
 import { Badge } from "@/components/ui/Badge";
@@ -33,13 +33,11 @@ export function ProductCard({
       }`}
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-soft">
-        <Image
+        <ProductImage
           src={product.image}
           alt={product.name}
-          fill
           className="object-cover transition duration-500 group-hover:scale-105"
           sizes="(max-width:768px) 100vw, 25vw"
-          unoptimized
         />
         {product.featured && (
           <div className="absolute right-3 top-3">
