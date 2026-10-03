@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ClipboardList,
   Gauge,
@@ -28,6 +28,11 @@ export default function AdminPage() {
   const orders = useStore((s) => s.orders);
   const products = useStore((s) => s.products);
   const wheelLeads = useStore((s) => s.wheelLeads);
+  const fetchAdminData = useStore((s) => s.fetchAdminData);
+
+  useEffect(() => {
+    fetchAdminData();
+  }, [fetchAdminData]);
 
   const pendingOrdersList = orders
     .filter((o) => o.status === "Pendiente")
@@ -59,10 +64,10 @@ export default function AdminPage() {
             Inventario / Admin
           </h1>
           <p className="mt-2 max-w-2xl text-ink/65">
-            El catálogo intenta guardarse en Supabase. Si ese proyecto no
-            está disponible, los cambios quedan en este servidor. Los
-            productos se consultan por WhatsApp. El texto del inicio y de
-            Nosotros se edita en Sitio.
+            Todo lo que guardes aquí se publica en el servidor y lo ven al
+            instante todos los visitantes del sitio, desde cualquier
+            dispositivo. Los productos se consultan por WhatsApp. El texto
+            del inicio y de Nosotros se edita en Sitio.
           </p>
         </div>
 
@@ -208,8 +213,8 @@ export default function AdminPage() {
             </h2>
             <p className="mb-4 text-sm text-ink/60">
               Cambia la tipografía, el navbar, la imagen y los textos de la
-              pantalla principal, y el contenido de la página Nosotros. Los
-              cambios se ven al instante en esta misma sesión del navegador.
+              pantalla principal, y el contenido de la página Nosotros. Al
+              guardar, los cambios se publican para todos los visitantes.
             </p>
             <SiteContentForm />
           </section>

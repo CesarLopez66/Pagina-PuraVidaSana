@@ -118,6 +118,20 @@ function ImagePicker({
 }
 
 export function SiteContentForm() {
+  const ready = useStore((s) => s.siteContentReady);
+  // El formulario parte de lo guardado en el servidor, no de una copia
+  // vieja del navegador, para no publicar contenido desactualizado.
+  if (!ready) {
+    return (
+      <p className="rounded-2xl border border-forest/10 bg-white p-5 text-sm text-ink/50 shadow-sm">
+        Cargando datos guardados...
+      </p>
+    );
+  }
+  return <SiteContentFormFields />;
+}
+
+function SiteContentFormFields() {
   const siteContent = useStore((s) => s.siteContent);
   const updateSiteContent = useStore((s) => s.updateSiteContent);
   const [form, setForm] = useState<SiteContent>(() => mergeSiteContent(siteContent));

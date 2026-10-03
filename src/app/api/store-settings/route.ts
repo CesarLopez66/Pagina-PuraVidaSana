@@ -2,19 +2,17 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { isAdminAuthenticated } from "@/lib/admin/auth";
 import { readJson, writeJson } from "@/lib/server-data";
-import { mergeSiteContent } from "@/lib/site-content";
-import type { SiteContent } from "@/types";
+import { STORE_SETTINGS_KEY, sanitizeStoreSettings } from "@/lib/store-settings";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const SITE_CONTENT_KEY = "site-content.json";
-
+// settings: null significa que el admin aún no guardó nada en el servidor.
 export async function GET() {
-  const stored = await readJson<Partial<SiteContent>>(SITE_CONTENT_KEY);
+  const stored = await readJson(STORE_SETTINGS_KEY);
   return NextResponse.json({
     ok: true,
-    content: stored ? mergeSiteContent(stored) : null,
+    settings: stored ? sanitizeStoreSettings(stored) : null,
   });
 }
 
@@ -31,14 +29,14 @@ export async function PUT(request: NextRequest) {
     );
   }
 
-  const content = mergeSiteContent(body as Partial<SiteContent>);
+  const settings = sanitizeStoreSettings(body);
   try {
-    await writeJson(SITE_CONTENT_KEY, content);
+    await writeJson(STORE_SETTINGS_KEY, settings);
   } catch {
     return NextResponse.json(
       { ok: false, message: "No se pudo guardar en el servidor." },
       { status: 500 }
     );
   }
-  return NextResponse.json({ ok: true, content });
+  return NextResponse.json({ ok: true, settings });
 }

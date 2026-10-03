@@ -7,10 +7,24 @@ import { useStore } from "@/store/useStore";
 import type { WheelPrize } from "@/lib/wheel";
 
 export function WheelPrizeSettings() {
+  const ready = useStore((s) => s.settingsReady);
+  if (!ready) {
+    return (
+      <p className="rounded-2xl border border-forest/10 bg-white p-5 text-sm text-ink/50 shadow-sm">
+        Cargando datos guardados...
+      </p>
+    );
+  }
+  return <WheelPrizeFields />;
+}
+
+function WheelPrizeFields() {
   const wheelPrizes = useStore((s) => s.wheelPrizes);
   const updateWheelPrizes = useStore((s) => s.updateWheelPrizes);
   const [prizes, setPrizes] = useState<WheelPrize[]>(wheelPrizes);
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const updatePrize = (index: number, updates: Partial<WheelPrize>) => {
     setPrizes((prev) =>
@@ -18,9 +32,16 @@ export function WheelPrizeSettings() {
     );
   };
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    updateWheelPrizes(prizes);
+    setSaving(true);
+    setSaveError(null);
+    const result = await updateWheelPrizes(prizes);
+    setSaving(false);
+    if (!result.ok) {
+      setSaveError(result.message ?? "No se pudo guardar.");
+      return;
+    }
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -55,13 +76,14 @@ export function WheelPrizeSettings() {
         ))}
       </div>
       <div className="flex items-center gap-3 border-t border-soft pt-4">
-        <Button type="submit" variant="secondary">
+        <Button type="submit" variant="secondary" disabled={saving}>
           <Save size={16} />
-          Guardar premios
+          {saving ? "Guardando..." : "Guardar premios"}
         </Button>
         {saved && (
           <span className="text-sm text-leaf">Guardado — ya está en vivo.</span>
         )}
+        {saveError && <span className="text-sm text-red-600">{saveError}</span>}
       </div>
     </form>
   );

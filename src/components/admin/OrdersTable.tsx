@@ -156,9 +156,15 @@ export function OrdersTable() {
                       </Badge>
                       <select
                         value={order.status}
-                        onChange={(e) =>
-                          updateOrderStatus(order.id, e.target.value as OrderStatus)
-                        }
+                        onChange={async (e) => {
+                          const result = await updateOrderStatus(
+                            order.id,
+                            e.target.value as OrderStatus
+                          );
+                          if (!result.ok) {
+                            alert(result.message ?? "No se pudo actualizar el pedido.");
+                          }
+                        }}
                         className="rounded-lg border border-forest/15 bg-surface px-2 py-1 text-xs outline-none focus:border-leaf"
                       >
                         {statusOptions.map((s) => (
@@ -171,9 +177,12 @@ export function OrdersTable() {
                   </td>
                   <td className="px-4 py-3">
                     <button
-                      onClick={() => {
+                      onClick={async () => {
                         if (confirm(`¿Eliminar el pedido ${order.id}?`)) {
-                          deleteOrder(order.id);
+                          const result = await deleteOrder(order.id);
+                          if (!result.ok) {
+                            alert(result.message ?? "No se pudo eliminar el pedido.");
+                          }
                         }
                       }}
                       className="rounded-lg p-2 text-red-600"

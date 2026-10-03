@@ -1,3 +1,5 @@
+import type { WheelPrize } from "@/lib/wheel";
+
 export type Category =
   | "Suplementos"
   | "Vitaminas"
@@ -135,6 +137,14 @@ export interface SiteContent {
   about: AboutContent;
   benefits: BenefitsContent;
   footer: FooterContent;
+}
+
+// Configuración del negocio y de la ruleta que el admin edita en el panel
+// y que se guarda en el servidor para todos los visitantes.
+export interface StoreSettings {
+  storeInfo: StoreInfo;
+  wheelPrizes: WheelPrize[];
+  wheelEnabled: boolean;
 }
 
 export interface Branch {

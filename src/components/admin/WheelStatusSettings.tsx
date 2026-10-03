@@ -10,7 +10,18 @@ export function WheelStatusSettings() {
   const setWheelEnabled = useStore((s) => s.setWheelEnabled);
   const hasPlayedWheel = useStore((s) => s.hasPlayedWheel);
   const resetWheelPlayed = useStore((s) => s.resetWheelPlayed);
+  const settingsReady = useStore((s) => s.settingsReady);
   const [justReset, setJustReset] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [toggleError, setToggleError] = useState<string | null>(null);
+
+  const toggle = async () => {
+    setSaving(true);
+    setToggleError(null);
+    const result = await setWheelEnabled(!wheelEnabled);
+    setSaving(false);
+    if (!result.ok) setToggleError(result.message ?? "No se pudo guardar.");
+  };
 
   const handleReset = () => {
     resetWheelPlayed();
@@ -28,16 +39,20 @@ export function WheelStatusSettings() {
           <p className="mt-0.5 text-xs text-ink/55">
             Actívala para lanzar una promoción y desactívala cuando no haya
             premios vigentes. El botón flotante aparece o desaparece al
-            instante, sin tocar código.
+            instante para todos los visitantes, sin tocar código.
           </p>
+          {toggleError && (
+            <p className="mt-1 text-xs text-red-600">{toggleError}</p>
+          )}
         </div>
         <button
           type="button"
           role="switch"
           aria-checked={wheelEnabled}
           aria-label="Activar o desactivar la ruleta"
-          onClick={() => setWheelEnabled(!wheelEnabled)}
-          className={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${
+          onClick={toggle}
+          disabled={!settingsReady || saving}
+          className={`relative h-7 w-12 shrink-0 rounded-full transition-colors disabled:opacity-60 ${
             wheelEnabled ? "bg-leaf" : "bg-ink/20"
           }`}
         >

@@ -48,6 +48,18 @@ function emptyBranch(): Branch {
 }
 
 export function StoreSettingsForm() {
+  const ready = useStore((s) => s.settingsReady);
+  if (!ready) {
+    return (
+      <p className="rounded-2xl border border-forest/10 bg-white p-5 text-sm text-ink/50 shadow-sm">
+        Cargando datos guardados...
+      </p>
+    );
+  }
+  return <StoreSettingsFields />;
+}
+
+function StoreSettingsFields() {
   const storeInfo = useStore((s) => s.storeInfo);
   const updateStoreInfo = useStore((s) => s.updateStoreInfo);
   const [form, setForm] = useState<StoreInfo>({
@@ -55,6 +67,8 @@ export function StoreSettingsForm() {
     branches: storeInfo.branches ?? [],
   });
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const set = <K extends keyof StoreInfo>(key: K, value: string) =>
     setForm((f) => ({
@@ -77,9 +91,16 @@ export function StoreSettingsForm() {
       branches: f.branches.filter((b) => b.id !== id),
     }));
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    updateStoreInfo(form);
+    setSaving(true);
+    setSaveError(null);
+    const result = await updateStoreInfo(form);
+    setSaving(false);
+    if (!result.ok) {
+      setSaveError(result.message ?? "No se pudo guardar.");
+      return;
+    }
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -200,13 +221,14 @@ export function StoreSettingsForm() {
       </div>
 
       <div className="flex items-center gap-3 border-t border-soft pt-4">
-        <Button type="submit" variant="secondary">
+        <Button type="submit" variant="secondary" disabled={saving}>
           <Save size={16} />
-          Guardar cambios
+          {saving ? "Guardando..." : "Guardar cambios"}
         </Button>
         {saved && (
           <span className="text-sm text-leaf">Guardado — ya está en vivo.</span>
         )}
+        {saveError && <span className="text-sm text-red-600">{saveError}</span>}
       </div>
     </form>
   );

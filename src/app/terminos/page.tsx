@@ -124,11 +124,11 @@ export default function TerminosPage() {
                 6. Dónde se guardan tus datos
               </h2>
               <p>
-                Tu carrito, tus pedidos y tu participación en la ruleta se
-                guardan localmente en el navegador que usas (localStorage), no
-                en un servidor central. Si borras los datos del sitio en tu
-                navegador o usas otro dispositivo, esta información no estará
-                disponible.
+                Los datos de tus pedidos y de tu participación en la ruleta se
+                guardan en nuestro servidor (Supabase), en un almacenamiento
+                privado al que solo accede nuestro equipo de administración.
+                Tu carrito y la marca de que ya jugaste la ruleta se guardan
+                solo en el navegador que usas (localStorage).
               </p>
             </section>
 
@@ -138,10 +138,10 @@ export default function TerminosPage() {
               </h2>
               <p>
                 Puedes pedirnos en cualquier momento acceder, corregir o
-                eliminar los datos que tengamos sobre ti. Como este sitio
-                guarda tus datos localmente en tu propio navegador, también
-                puedes eliminarlos tú mismo/a de inmediato con el botón de
-                abajo:
+                eliminar los datos que tengamos sobre ti. Para borrar los datos
+                guardados en nuestro servidor, escríbenos por WhatsApp. Los
+                datos guardados en tu navegador puedes borrarlos tú mismo/a de
+                inmediato con el botón de abajo:
               </p>
               <div className="mt-3 flex flex-wrap gap-3">
                 <DeleteMyDataButton />
@@ -155,11 +155,11 @@ export default function TerminosPage() {
                 </a>
               </div>
               <p className="mt-3 text-xs text-ink/55">
-                Esto borra tu carrito, tu historial de pedidos y tu
-                participación en la ruleta guardados en este navegador. No
-                elimina mensajes que ya hayas enviado por WhatsApp: para eso,
-                contáctanos y lo eliminaremos de nuestro lado manualmente en
-                un plazo razonable.
+                El botón borra tu carrito y tu participación en la ruleta
+                guardados en este navegador. No elimina los datos de nuestro
+                servidor ni los mensajes que ya hayas enviado por WhatsApp:
+                para eso, contáctanos y los eliminaremos manualmente en un
+                plazo razonable.
               </p>
             </section>
 

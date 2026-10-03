@@ -1,8 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import mockData from "@/data/mockData.json";
 import type {
-  Branch,
   CartItem,
   Order,
   OrderStatus,
@@ -10,9 +8,11 @@ import type {
   ShippingInfo,
   SiteContent,
   StoreInfo,
+  StoreSettings,
   WheelLead,
 } from "@/types";
 import { defaultSiteContent, mergeSiteContent } from "@/lib/site-content";
+import { defaultStoreInfo } from "@/lib/store-settings";
 import { WHEEL_PRIZES, type WheelPrize } from "@/lib/wheel";
 
 interface StoreState {
@@ -36,21 +36,25 @@ interface StoreState {
   hydrated: boolean;
   setHydrated: (value: boolean) => void;
   siteContentReady: boolean;
+  settingsReady: boolean;
   setSearchQuery: (query: string) => void;
   setCartOpen: (open: boolean) => void;
   setCheckoutOpen: (open: boolean) => void;
   setSelectedProduct: (id: string | null) => void;
   setWheelOpen: (open: boolean) => void;
-  addWheelLead: (lead: Omit<WheelLead, "id" | "createdAt">) => WheelLead;
-  deleteWheelLead: (id: string) => void;
-  setWheelEnabled: (enabled: boolean) => void;
+  addWheelLead: (lead: Omit<WheelLead, "id" | "createdAt">) => Promise<SaveResult>;
+  deleteWheelLead: (id: string) => Promise<SaveResult>;
+  setWheelEnabled: (enabled: boolean) => Promise<SaveResult>;
   resetWheelPlayed: () => void;
   clearMyPersonalData: () => void;
-  updateStoreInfo: (updates: Partial<StoreInfo>) => void;
+  updateStoreInfo: (updates: Partial<StoreInfo>) => Promise<SaveResult>;
+  saveStoreSettings: (updates: Partial<StoreSettings>) => Promise<SaveResult>;
+  fetchStoreSettings: () => Promise<void>;
+  fetchAdminData: () => Promise<void>;
   updateSiteContent: (content: SiteContent) => Promise<{ ok: boolean; message?: string }>;
   fetchSiteContent: () => Promise<void>;
-  updateWheelPrizes: (prizes: WheelPrize[]) => void;
-  deleteOrder: (id: string) => void;
+  updateWheelPrizes: (prizes: WheelPrize[]) => Promise<SaveResult>;
+  deleteOrder: (id: string) => Promise<SaveResult>;
   addToCart: (productId: string, quantity?: number) => { ok: boolean; message?: string };
   removeFromCart: (productId: string) => void;
   updateCartQuantity: (productId: string, quantity: number) => { ok: boolean; message?: string };
@@ -68,21 +72,42 @@ interface StoreState {
   ) => Promise<{ ok: boolean; message?: string; product?: Product }>;
   deleteProduct: (id: string) => Promise<{ ok: boolean; message?: string }>;
   confirmOrder: (shipping: ShippingInfo) => Order;
-  updateOrderStatus: (id: string, status: OrderStatus) => void;
+  updateOrderStatus: (id: string, status: OrderStatus) => Promise<SaveResult>;
 }
 
-const initialStoreInfo: StoreInfo = {
-  name: mockData.storeInfo.name,
-  tagline: mockData.storeInfo.tagline,
-  phone: mockData.storeInfo.phone,
-  whatsapp: mockData.storeInfo.whatsapp,
-  email: mockData.storeInfo.email,
-  branches: mockData.storeInfo.branches as Branch[],
-  instagram: "",
-  facebook: "",
-  tiktok: "",
-  shippingFee: 0,
-};
+type SaveResult = { ok: boolean; message?: string };
+
+// Llamada común a las rutas del servidor, con los mensajes de error que
+// muestra el panel.
+async function sendJson(
+  url: string,
+  method: string,
+  body?: unknown
+): Promise<SaveResult & { data?: Record<string, unknown> }> {
+  try {
+    const res = await fetch(url, {
+      method,
+      cache: "no-store",
+      headers: body === undefined ? undefined : { "Content-Type": "application/json" },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) {
+      return {
+        ok: false,
+        message:
+          res.status === 401
+            ? "Tu sesión de administrador expiró. Vuelve a iniciar sesión."
+            : (data.message ?? "No se pudo guardar en el servidor."),
+      };
+    }
+    return { ok: true, data };
+  } catch {
+    return { ok: false, message: "No se pudo conectar con el servidor." };
+  }
+}
+
+const initialStoreInfo: StoreInfo = defaultStoreInfo;
 
 export const useStore = create<StoreState>()(
   persist(
@@ -106,6 +131,7 @@ export const useStore = create<StoreState>()(
       searchQuery: "",
       hydrated: false,
       siteContentReady: false,
+      settingsReady: false,
 
       setHydrated: (value) => set({ hydrated: value }),
       setSearchQuery: (query) => set({ searchQuery: query }),
@@ -114,7 +140,44 @@ export const useStore = create<StoreState>()(
       setSelectedProduct: (id) => set({ selectedProductId: id }),
       setWheelOpen: (open) => set({ isWheelOpen: open }),
       updateStoreInfo: (updates) =>
-        set((state) => ({ storeInfo: { ...state.storeInfo, ...updates } })),
+        get().saveStoreSettings({
+          storeInfo: { ...get().storeInfo, ...updates },
+        }),
+      // Siempre se envía la configuración completa: así, mientras el
+      // servidor no tenga nada guardado, no se pisan con valores por
+      // defecto los datos que el admin ya tenía en su navegador.
+      saveStoreSettings: async (updates) => {
+        const { storeInfo, wheelPrizes, wheelEnabled } = get();
+        const next: StoreSettings = { storeInfo, wheelPrizes, wheelEnabled, ...updates };
+        const result = await sendJson("/api/store-settings", "PUT", next);
+        if (result.ok && result.data?.settings) {
+          set(result.data.settings as StoreSettings);
+        }
+        return { ok: result.ok, message: result.message };
+      },
+      fetchStoreSettings: async () => {
+        try {
+          const res = await fetch("/api/store-settings", { cache: "no-store" });
+          const data = await res.json();
+          if (data.ok && data.settings) {
+            set(data.settings as StoreSettings);
+          }
+        } catch {
+          // Sin servidor se mantiene la copia guardada en el navegador.
+        } finally {
+          set({ settingsReady: true });
+        }
+      },
+      fetchAdminData: async () => {
+        const [orders, leads] = await Promise.all([
+          sendJson("/api/admin/orders", "GET"),
+          sendJson("/api/admin/wheel-leads", "GET"),
+        ]);
+        set({
+          ...(orders.ok ? { orders: orders.data?.orders as Order[] } : {}),
+          ...(leads.ok ? { wheelLeads: leads.data?.leads as WheelLead[] } : {}),
+        });
+      },
       updateSiteContent: async (content) => {
         const merged = mergeSiteContent(content);
         set({ siteContent: merged });
@@ -151,8 +214,8 @@ export const useStore = create<StoreState>()(
           set({ siteContentReady: true });
         }
       },
-      updateWheelPrizes: (prizes) => set({ wheelPrizes: prizes }),
-      setWheelEnabled: (enabled) => set({ wheelEnabled: enabled }),
+      updateWheelPrizes: (prizes) => get().saveStoreSettings({ wheelPrizes: prizes }),
+      setWheelEnabled: (enabled) => get().saveStoreSettings({ wheelEnabled: enabled }),
       resetWheelPlayed: () => set({ hasPlayedWheel: false }),
 
       // Autoservicio de "derecho al olvido": borra del navegador actual
@@ -170,27 +233,32 @@ export const useStore = create<StoreState>()(
           hasPlayedWheel: false,
         }),
 
-      deleteWheelLead: (id) =>
-        set((state) => ({
-          wheelLeads: state.wheelLeads.filter((l) => l.id !== id),
-        })),
+      deleteWheelLead: async (id) => {
+        const result = await sendJson(`/api/admin/wheel-leads/${id}`, "DELETE");
+        if (result.ok) {
+          set((state) => ({
+            wheelLeads: state.wheelLeads.filter((l) => l.id !== id),
+          }));
+        }
+        return { ok: result.ok, message: result.message };
+      },
 
-      deleteOrder: (id) =>
-        set((state) => ({
-          orders: state.orders.filter((o) => o.id !== id),
-        })),
+      deleteOrder: async (id) => {
+        const result = await sendJson(`/api/admin/orders/${id}`, "DELETE");
+        if (result.ok) {
+          set((state) => ({
+            orders: state.orders.filter((o) => o.id !== id),
+          }));
+        }
+        return { ok: result.ok, message: result.message };
+      },
 
-      addWheelLead: (lead) => {
-        const newLead: WheelLead = {
-          ...lead,
-          id: `WL-${Date.now().toString(36).toUpperCase()}`,
-          createdAt: new Date().toISOString(),
-        };
-        set((state) => ({
-          wheelLeads: [newLead, ...state.wheelLeads],
-          hasPlayedWheel: true,
-        }));
-        return newLead;
+      // El lead se guarda en el servidor para que el admin lo vea; en el
+      // navegador del visitante solo queda la marca de que ya jugó.
+      addWheelLead: async (lead) => {
+        set({ hasPlayedWheel: true });
+        const result = await sendJson("/api/wheel-leads", "POST", lead);
+        return { ok: result.ok, message: result.message };
       },
 
       getProduct: (id) => get().products.find((p) => p.id === id),
@@ -350,7 +418,7 @@ export const useStore = create<StoreState>()(
         const shippingFee = storeInfo.shippingFee;
         const total = subtotal + shippingFee;
         const order: Order = {
-          id: `ORD-${Date.now().toString(36).toUpperCase()}`,
+          id: `ORD-${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).slice(2, 5).toUpperCase()}`,
           items: [...cart],
           shipping,
           total,
@@ -364,37 +432,50 @@ export const useStore = create<StoreState>()(
         // redirige a WhatsApp para que el dueño confirme la venta.
         // El pedido queda registrado en /admin para que el dueño lo
         // revise y sea él quien ajuste el stock manualmente.
-        set((state) => ({
+        set({
           cart: [],
           lastOrder: order,
-          orders: [order, ...state.orders],
           isCartOpen: false,
           isCheckoutOpen: false,
-        }));
+        });
+        // Registro en el servidor para el panel. Si falla, el envío por
+        // WhatsApp sigue funcionando igual.
+        void sendJson("/api/orders", "POST", order);
 
         return order;
       },
 
-      updateOrderStatus: (id, status) =>
-        set((state) => ({
-          orders: state.orders.map((o) => (o.id === id ? { ...o, status } : o)),
-          lastOrder:
-            state.lastOrder?.id === id
-              ? { ...state.lastOrder, status }
-              : state.lastOrder,
-        })),
+      updateOrderStatus: async (id, status) => {
+        const result = await sendJson(`/api/admin/orders/${id}`, "PATCH", { status });
+        if (result.ok) {
+          set((state) => ({
+            orders: state.orders.map((o) => (o.id === id ? { ...o, status } : o)),
+          }));
+        }
+        return { ok: result.ok, message: result.message };
+      },
 
     }),
     {
       name: "pura-vida-sana-store-v2",
+      // Pedidos y leads viven en el servidor; la versión 0 los guardaba en
+      // el navegador, por eso se descartan al migrar.
+      version: 1,
+      migrate: (persisted) => {
+        const state = { ...(persisted as Record<string, unknown>) };
+        delete state.orders;
+        delete state.wheelLeads;
+        return state as unknown as StoreState;
+      },
+      // storeInfo, siteContent y la ruleta quedan solo como copia en caché:
+      // al cargar la página, StoreHydration los reemplaza con los del
+      // servidor, que son los mismos para todos los visitantes.
       partialize: (state) => ({
         cart: state.cart,
         lastOrder: state.lastOrder,
-        orders: state.orders,
         storeInfo: state.storeInfo,
         siteContent: state.siteContent,
         wheelPrizes: state.wheelPrizes,
-        wheelLeads: state.wheelLeads,
         hasPlayedWheel: state.hasPlayedWheel,
         wheelEnabled: state.wheelEnabled,
       }),

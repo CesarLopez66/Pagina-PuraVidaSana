@@ -82,7 +82,7 @@ export function WheelModal() {
     setTimeout(() => {
       const newCode = generateWheelCode();
       setCode(newCode);
-      addWheelLead({
+      void addWheelLead({
         name: form.name,
         email: form.email,
         phone: form.phone,

@@ -8,9 +8,15 @@ export function WheelButton() {
   const pathname = usePathname();
   const hasPlayedWheel = useStore((s) => s.hasPlayedWheel);
   const wheelEnabled = useStore((s) => s.wheelEnabled);
+  const settingsReady = useStore((s) => s.settingsReady);
   const setWheelOpen = useStore((s) => s.setWheelOpen);
 
-  if (pathname.startsWith("/admin") || hasPlayedWheel || !wheelEnabled)
+  if (
+    pathname.startsWith("/admin") ||
+    !settingsReady ||
+    hasPlayedWheel ||
+    !wheelEnabled
+  )
     return null;
 
   return (

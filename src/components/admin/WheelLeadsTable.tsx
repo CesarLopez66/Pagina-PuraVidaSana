@@ -88,9 +88,12 @@ export function WheelLeadsTable() {
                 </td>
                 <td className="px-4 py-3">
                   <button
-                    onClick={() => {
+                    onClick={async () => {
                       if (confirm(`¿Eliminar el lead de "${lead.name}"?`)) {
-                        deleteWheelLead(lead.id);
+                        const result = await deleteWheelLead(lead.id);
+                        if (!result.ok) {
+                          alert(result.message ?? "No se pudo eliminar el lead.");
+                        }
                       }
                     }}
                     className="rounded-lg p-2 text-red-600"

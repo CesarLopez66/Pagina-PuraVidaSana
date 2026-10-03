@@ -45,3 +45,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# manual de usuario (contiene credenciales de administrador)
+/Manual_de_Usuario_*

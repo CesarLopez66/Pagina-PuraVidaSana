@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { isAdminAuthenticated } from "@/lib/admin/auth";
 import { CUSTOM_FONT_FORMATS } from "@/lib/fonts";
-import { saveLocalUpload } from "@/lib/local-storage-server";
+import { savePublicAsset } from "@/lib/server-data";
 
 export const runtime = "nodejs";
 
@@ -53,9 +53,10 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const url = await saveLocalUpload(
-      `${id}.${ext}`,
-      await file.arrayBuffer()
+    const url = await savePublicAsset(
+      `fonts/${id}.${ext}`,
+      await file.arrayBuffer(),
+      `font/${ext}`
     );
     return NextResponse.json({
       ok: true,
